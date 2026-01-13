@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سحب الأسماء السري</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="ornate-border">
+            <h1 class="title">سحب الأسماء</h1>
+            <div class="role-indicator" id="roleIndicator"></div>
+        </header>
+
+        <div class="content-box ornate-border">
+            <!-- Landing Page (No Session) - Participant Only -->
+            <section class="landing-section" id="landingSection">
+                <h2>مرحباً</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">أدخل اسمك للانضمام إلى السحب</p>
+                <div style="max-width: 500px; margin: 0 auto;">
+                    <div class="input-group">
+                        <input type="text" id="joinName" placeholder="أدخل اسمك الكامل" class="vintage-input">
+                    </div>
+                    <button onclick="joinFromLanding()" class="vintage-button primary" style="width: 100%;">
+                        انضم الآن
+                    </button>
+                </div>
+            </section>
+
+            <!-- Create Session Modal -->
+            <section class="create-session-section" id="createSessionSection" style="display: none;">
+                <h2>إنشاء جلسة جديدة</h2>
+                <div class="input-group">
+                    <input type="text" id="sessionName" placeholder="اسم الجلسة (مثال: عائلة 2026)" class="vintage-input">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="organizerName" placeholder="اسمك" class="vintage-input">
+                </div>
+                <div class="action-buttons">
+                    <button onclick="createSession()" class="vintage-button primary">
+                        إنشاء
+                    </button>
+                    <button onclick="backToLanding()" class="vintage-button secondary">
+                        إلغاء
+                    </button>
+                </div>
+            </section>
+
+            <!-- Organizer View -->
+            <section class="organizer-section" id="organizerSection" style="display: none;">
+                <h2>لوحة التحكم</h2>
+
+                <!-- Session Info -->
+                <div class="session-info">
+                    <h3 id="sessionTitle"></h3>
+                    <div class="session-link-box">
+                        <label>رابط المشاركة:</label>
+                        <div class="link-display">
+                            <input type="text" id="sessionLink" readonly class="link-input">
+                            <button onclick="copySessionLink()" class="vintage-button">📋 نسخ</button>
+                        </div>
+                        <div class="share-buttons">
+                            <button onclick="shareWhatsApp()" class="vintage-button">WhatsApp</button>
+                            <button onclick="shareTelegram()" class="vintage-button">Telegram</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participants List -->
+                <div class="participants-management">
+                    <h3>المشاركون (<span id="participantCount">0</span>)</h3>
+                    <ul id="organizerParticipantsList" class="participants-list"></ul>
+                </div>
+
+                <!-- Restrictions Interface -->
+                <div class="restrictions-section">
+                    <h3>القيود (اختياري)</h3>
+                    <p class="help-text">حدد من لا يمكن أن يسحب بعضهم بعضاً</p>
+                    <div id="restrictionsContainer"></div>
+                </div>
+
+                <!-- Draw Controls -->
+                <div class="draw-controls">
+                    <div class="draw-progress">
+                        <span id="organizerProgressText">0 من 0 سحبوا</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="organizerProgressFill"></div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button onclick="startDrawAsOrganizer()" class="vintage-button primary" id="startDrawBtn">
+                            بدء السحب
+                        </button>
+                        <button onclick="resetSession()" class="vintage-button secondary">
+                            إعادة تعيين
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Participant View -->
+            <section class="participant-section" id="participantSection" style="display: none;">
+                <div class="participant-name-display">
+                    <span id="participantNameLabel"></span>
+                </div>
+
+                <!-- Waiting State -->
+                <div class="waiting-state" id="waitingState">
+                    <div class="waiting-animation">⏳</div>
+                    <h3>جاري الانتظار...</h3>
+                    <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
+                </div>
+
+                <!-- Excluded State -->
+                <div class="excluded-state" id="excludedState" style="display: none;">
+                    <div class="waiting-animation">⏰</div>
+                    <h3>يرجى الانتظار</h3>
+                    <p>سيتم إعلامك عندما يحين دورك</p>
+                </div>
+
+                <!-- Ready to Draw -->
+                <div class="ready-state" id="readyState" style="display: none;">
+                    <div class="ready-animation">✨</div>
+                    <h3>جاهز للسحب!</h3>
+                    <button onclick="drawAsParticipant()" class="vintage-button primary large">
+                        اسحب الآن
+                    </button>
+                </div>
+
+                <!-- Result Display -->
+                <div class="result-state" id="resultState" style="display: none;">
+                    <div class="result-display" id="participantResultDisplay"></div>
+                    <button onclick="copyResult()" class="vintage-button">
+                        📤 نسخ النتيجة
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer"></footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
