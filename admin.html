@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - سحب الأسماء السري</title>
     <script>
-        // Redirect to admin creation mode
-        window.location.href = 'index.html?role=admin';
+        // Redirect to admin creation mode (works with GitHub Pages)
+        const currentPath = window.location.pathname;
+        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        window.location.href = basePath + 'index.html?role=admin';
     </script>
 </head>
 <body>

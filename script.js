@@ -23,7 +23,7 @@ function showNotification(message) {
 }
 
 function createConfetti() {
-    const colors = ['#D4AF37', '#B8860B', '#8B0000', '#F5E6D3'];
+    const colors = ['#3498DB', '#2ECC71', '#E74C3C', '#F39C12', '#9B59B6'];
     const container = document.createElement('div');
     container.className = 'confetti-container';
     document.body.appendChild(container);
@@ -44,11 +44,11 @@ function createConfetti() {
 }
 
 function generateSessionId() {
-    return 'session_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+    return 'session_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
 }
 
 function generateAdminKey() {
-    return Math.random().toString(36).substr(2, 15);
+    return Math.random().toString(36).substring(2, 17);
 }
 
 function getUrlParams() {
@@ -58,6 +58,24 @@ function getUrlParams() {
         role: params.get('role'),
         key: params.get('key')
     };
+}
+
+// Get the base URL for the app (works with GitHub Pages subdirectory)
+function getBaseUrl() {
+    // Get the current path and ensure it points to index.html
+    let path = window.location.pathname;
+
+    // If path ends with a specific file, use that directory
+    if (path.endsWith('.html')) {
+        path = path.substring(0, path.lastIndexOf('/') + 1);
+    }
+
+    // Ensure path ends with /
+    if (!path.endsWith('/')) {
+        path += '/';
+    }
+
+    return `${window.location.origin}${path}`;
 }
 
 function hideAllSections() {
@@ -111,7 +129,7 @@ async function createSession() {
         localStorage.setItem('adminKey', adminKey);
 
         // Update URL
-        const organizerUrl = `${window.location.origin}${window.location.pathname}?session=${sessionId}&role=organizer&key=${adminKey}`;
+        const organizerUrl = `${getBaseUrl()}?session=${sessionId}&role=organizer&key=${adminKey}`;
         window.history.pushState({}, '', organizerUrl);
 
         currentSession = sessionId;
@@ -214,7 +232,7 @@ async function loadOrganizerData() {
         document.getElementById('sessionTitle').textContent = sessionData.name;
 
         // Generate and display participant link
-        const participantUrl = `${window.location.origin}${window.location.pathname}?session=${currentSession}`;
+        const participantUrl = `${getBaseUrl()}?session=${currentSession}`;
         document.getElementById('sessionLink').value = participantUrl;
     } catch (error) {
         console.error('Error loading organizer data:', error);
@@ -292,8 +310,8 @@ function updateRestrictionsInterface() {
         restrictionBox.className = 'restriction-box';
 
         const participantNames = participants
-            .filter(([otherId, _]) => otherId !== id && !participantsData[otherId].isExcluded)
-            .map(([otherId, otherData]) => otherData.name);
+            .filter(([otherId]) => otherId !== id && !participantsData[otherId].isExcluded)
+            .map(([, otherData]) => otherData.name);
 
         const currentRestrictions = restrictionsData[data.name] || [];
 
@@ -698,11 +716,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (currentRole === 'organizer') {
             const adminKey = localStorage.getItem('adminKey');
-            const organizerUrl = `${window.location.origin}${window.location.pathname}?session=${currentSession}&role=organizer&key=${adminKey}`;
+            const organizerUrl = `${getBaseUrl()}?session=${currentSession}&role=organizer&key=${adminKey}`;
             window.history.pushState({}, '', organizerUrl);
             initializeOrganizerView();
         } else {
-            const participantUrl = `${window.location.origin}${window.location.pathname}?session=${currentSession}`;
+            const participantUrl = `${getBaseUrl()}?session=${currentSession}`;
             window.history.pushState({}, '', participantUrl);
             initializeParticipantView();
         }
