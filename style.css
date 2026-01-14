@@ -971,4 +971,130 @@ h3 {
         order: 0;
         align-self: flex-start;
     }
+
+    .individual-assignment-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .waiting-participant-item {
+        justify-content: center;
+    }
+}
+
+/* Participants Browser (Waiting State) */
+.participants-browser {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.participants-browser h4 {
+    margin: 0 0 1rem 0;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.waiting-participants-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.waiting-participant-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--card-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+}
+
+.waiting-participant-item:last-child {
+    margin-bottom: 0;
+}
+
+.waiting-participant-item .participant-icon {
+    font-size: 1.1rem;
+}
+
+.waiting-participant-item .participant-icon.drawn {
+    color: var(--success-color);
+}
+
+.waiting-participant-item .participant-icon.excluded {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.waiting-participant-item .participant-name {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.waiting-participants-list .empty-item {
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Individual Assignments (Admin) */
+.individual-assignments {
+    margin-top: 1.5rem;
+}
+
+.individual-assignment-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--card-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.individual-assignment-item.revealed {
+    background: #E8F8F5;
+    border-color: var(--success-color);
+}
+
+.individual-giver {
+    font-weight: 600;
+    color: var(--primary-color);
+    min-width: 100px;
+}
+
+.individual-hidden {
+    flex: 1;
+    text-align: center;
+}
+
+.individual-arrow {
+    color: var(--accent-color);
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.individual-receiver {
+    font-weight: 600;
+    color: var(--success-color);
+    flex: 1;
+}
+
+.vintage-button.small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.results-buttons {
+    margin-bottom: 1rem;
 }

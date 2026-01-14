@@ -257,6 +257,7 @@ async function loadOrganizerData() {
         // Show view results section if draw has started
         if (sessionData.status === 'drawing' || sessionData.status === 'completed') {
             document.getElementById('viewResultsSection').style.display = 'block';
+            loadIndividualAssignments();
         }
     } catch (error) {
         console.error('Error loading organizer data:', error);
@@ -556,6 +557,45 @@ function listenToSessionStatus() {
 
         // Update UI based on state
         updateParticipantState(sessionData.status, participantData);
+
+        // Update participants browser list
+        updateWaitingParticipantsList(sessionData.participants, participantId);
+    });
+}
+
+function updateWaitingParticipantsList(participants, currentParticipantId) {
+    const list = document.getElementById('waitingParticipantsList');
+    if (!list) return;
+
+    list.innerHTML = '';
+
+    const otherParticipants = Object.entries(participants || {})
+        .filter(([id, _]) => id !== currentParticipantId);
+
+    if (otherParticipants.length === 0) {
+        list.innerHTML = '<li class="empty-item">لا يوجد مشاركون آخرون حتى الآن</li>';
+        return;
+    }
+
+    otherParticipants.forEach(([id, data]) => {
+        const li = document.createElement('li');
+        li.className = 'waiting-participant-item';
+
+        let statusIcon = '👤';
+        let statusClass = '';
+        if (data.isExcluded) {
+            statusIcon = '⏸️';
+            statusClass = 'excluded';
+        } else if (data.hasDrawn) {
+            statusIcon = '✅';
+            statusClass = 'drawn';
+        }
+
+        li.innerHTML = `
+            <span class="participant-icon ${statusClass}">${statusIcon}</span>
+            <span class="participant-name">${data.name}</span>
+        `;
+        list.appendChild(li);
     });
 }
 
@@ -787,6 +827,7 @@ async function displayAllAssignments() {
 
         document.getElementById('allAssignmentsContainer').style.display = 'block';
         document.getElementById('showResultsBtn').style.display = 'none';
+        document.getElementById('individualAssignmentsContainer').style.display = 'none';
     } catch (error) {
         console.error('Error displaying assignments:', error);
         showNotification('حدث خطأ في عرض النتائج');
@@ -796,6 +837,78 @@ async function displayAllAssignments() {
 function hideAllAssignments() {
     document.getElementById('allAssignmentsContainer').style.display = 'none';
     document.getElementById('showResultsBtn').style.display = 'inline-block';
+    document.getElementById('individualAssignmentsContainer').style.display = 'block';
+    loadIndividualAssignments();
+}
+
+// Individual assignment reveal for admin
+async function loadIndividualAssignments() {
+    try {
+        const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
+        const assignments = snapshot.val();
+
+        if (!assignments || Object.keys(assignments).length === 0) {
+            return;
+        }
+
+        const container = document.getElementById('individualAssignmentsContainer');
+        container.innerHTML = '';
+
+        Object.entries(assignments).forEach(([giver, receiver]) => {
+            const item = document.createElement('div');
+            item.className = 'individual-assignment-item';
+            item.id = `individual-${giver.replace(/\s+/g, '-')}`;
+            item.innerHTML = `
+                <div class="individual-giver">${giver}</div>
+                <div class="individual-hidden">
+                    <button onclick="revealIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small">
+                        👁️ كشف
+                    </button>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading individual assignments:', error);
+    }
+}
+
+function revealIndividualAssignment(giver, receiver) {
+    if (!confirm(`هل تريد كشف نتيجة ${giver}؟`)) {
+        return;
+    }
+
+    const itemId = `individual-${giver.replace(/\s+/g, '-')}`;
+    const item = document.getElementById(itemId);
+
+    if (item) {
+        item.innerHTML = `
+            <div class="individual-giver">${giver}</div>
+            <div class="individual-arrow">→</div>
+            <div class="individual-receiver">${receiver}</div>
+            <button onclick="hideIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small secondary">
+                إخفاء
+            </button>
+        `;
+        item.classList.add('revealed');
+    }
+}
+
+function hideIndividualAssignment(giver, receiver) {
+    const itemId = `individual-${giver.replace(/\s+/g, '-')}`;
+    const item = document.getElementById(itemId);
+
+    if (item) {
+        item.innerHTML = `
+            <div class="individual-giver">${giver}</div>
+            <div class="individual-hidden">
+                <button onclick="revealIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small">
+                    👁️ كشف
+                </button>
+            </div>
+        `;
+        item.classList.remove('revealed');
+    }
 }
 
 // Delete session

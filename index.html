@@ -137,9 +137,14 @@
                 <!-- View All Assignments (Hidden by default) -->
                 <div class="view-results-section" id="viewResultsSection" style="display: none;">
                     <h3>عرض النتائج</h3>
-                    <button onclick="showAllAssignments()" class="vintage-button" id="showResultsBtn">
-                        عرض جميع النتائج
-                    </button>
+                    <div class="results-buttons">
+                        <button onclick="showAllAssignments()" class="vintage-button" id="showResultsBtn">
+                            عرض جميع النتائج
+                        </button>
+                    </div>
+                    <!-- Individual Results (each hidden by default) -->
+                    <div class="individual-assignments" id="individualAssignmentsContainer"></div>
+                    <!-- All Results View -->
                     <div class="all-assignments" id="allAssignmentsContainer" style="display: none;">
                         <div id="assignmentsList"></div>
                         <button onclick="hideAllAssignments()" class="vintage-button secondary">
@@ -168,6 +173,12 @@
                     <div class="waiting-animation">⏳</div>
                     <h3>جاري الانتظار...</h3>
                     <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
+
+                    <!-- Participants Browser -->
+                    <div class="participants-browser">
+                        <h4>المشاركون الآخرون</h4>
+                        <ul id="waitingParticipantsList" class="waiting-participants-list"></ul>
+                    </div>
                 </div>
 
                 <!-- Excluded State -->
