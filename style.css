@@ -1098,3 +1098,24 @@ h3 {
 .results-buttons {
     margin-bottom: 1rem;
 }
+
+/* Admin Login */
+.admin-login-section {
+    text-align: center;
+}
+
+.admin-login-section .input-group {
+    margin-bottom: 1rem;
+}
+
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.admin-header h2 {
+    margin: 0;
+}

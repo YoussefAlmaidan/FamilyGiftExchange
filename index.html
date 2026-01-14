@@ -28,9 +28,38 @@
                 </div>
             </section>
 
+            <!-- Admin Login -->
+            <section class="admin-login-section" id="adminLoginSection" style="display: none;">
+                <h2>دخول المدير</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <div class="input-group">
+                        <input type="password" id="adminPassword" placeholder="كلمة المرور" class="vintage-input">
+                    </div>
+                    <button onclick="adminLogin()" class="vintage-button primary" style="width: 100%;">
+                        دخول
+                    </button>
+                    <div id="adminSetupPrompt" style="display: none; margin-top: 1.5rem; padding: 1rem; background: #FEF9E7; border-radius: 8px;">
+                        <p style="margin-bottom: 1rem; color: var(--primary-color);">لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:</p>
+                        <div class="input-group">
+                            <input type="password" id="newAdminPassword" placeholder="كلمة المرور الجديدة" class="vintage-input">
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="confirmAdminPassword" placeholder="تأكيد كلمة المرور" class="vintage-input">
+                        </div>
+                        <button onclick="setupAdminPassword()" class="vintage-button primary" style="width: 100%;">
+                            إنشاء كلمة المرور
+                        </button>
+                    </div>
+                </div>
+            </section>
+
             <!-- Admin Dashboard (Session List) -->
             <section class="admin-dashboard-section" id="adminDashboardSection" style="display: none;">
-                <h2>لوحة المدير</h2>
+                <div class="admin-header">
+                    <h2>لوحة المدير</h2>
+                    <button onclick="adminLogout()" class="vintage-button secondary small">تسجيل خروج</button>
+                </div>
                 <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">إدارة جلسات سحب الأسماء</p>
 
                 <!-- Create New Session Button -->

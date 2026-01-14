@@ -80,10 +80,20 @@ function getBaseUrl() {
 
 function hideAllSections() {
     document.getElementById('landingSection').style.display = 'none';
+    document.getElementById('adminLoginSection').style.display = 'none';
     document.getElementById('adminDashboardSection').style.display = 'none';
     document.getElementById('createSessionSection').style.display = 'none';
     document.getElementById('organizerSection').style.display = 'none';
     document.getElementById('participantSection').style.display = 'none';
+}
+
+// Simple hash function for password (not cryptographically secure, but sufficient for this use case)
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // ============================================
@@ -948,37 +958,144 @@ async function deleteSession() {
 }
 
 // ============================================
+// ADMIN AUTHENTICATION
+// ============================================
+
+let isAdminAuthenticated = false;
+
+// Check if admin password is set up
+async function checkAdminSetup() {
+    try {
+        const snapshot = await db.ref('admin/passwordHash').once('value');
+        return snapshot.exists();
+    } catch (error) {
+        console.error('Error checking admin setup:', error);
+        return false;
+    }
+}
+
+// Show admin login page
+async function showAdminLogin() {
+    hideAllSections();
+    document.getElementById('adminLoginSection').style.display = 'block';
+    document.getElementById('roleIndicator').innerHTML = '';
+
+    // Check if password is already set up
+    const isSetup = await checkAdminSetup();
+    if (!isSetup) {
+        document.getElementById('adminSetupPrompt').style.display = 'block';
+    } else {
+        document.getElementById('adminSetupPrompt').style.display = 'none';
+    }
+
+    // Check if already authenticated in this session
+    if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+        isAdminAuthenticated = true;
+        showAdminDashboard();
+    }
+}
+
+// Setup initial admin password
+async function setupAdminPassword() {
+    const password = document.getElementById('newAdminPassword').value;
+    const confirmPassword = document.getElementById('confirmAdminPassword').value;
+
+    if (!password || password.length < 4) {
+        showNotification('كلمة المرور يجب أن تكون 4 أحرف على الأقل');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        showNotification('كلمات المرور غير متطابقة');
+        return;
+    }
+
+    try {
+        const passwordHash = await hashPassword(password);
+        await db.ref('admin/passwordHash').set(passwordHash);
+
+        showNotification('تم إنشاء كلمة المرور بنجاح!');
+
+        // Auto-login after setup
+        isAdminAuthenticated = true;
+        sessionStorage.setItem('adminAuthenticated', 'true');
+        showAdminDashboard();
+    } catch (error) {
+        console.error('Error setting up password:', error);
+        showNotification('حدث خطأ في إنشاء كلمة المرور');
+    }
+}
+
+// Admin login
+async function adminLogin() {
+    const password = document.getElementById('adminPassword').value;
+
+    if (!password) {
+        showNotification('الرجاء إدخال كلمة المرور');
+        return;
+    }
+
+    try {
+        const passwordHash = await hashPassword(password);
+        const snapshot = await db.ref('admin/passwordHash').once('value');
+        const storedHash = snapshot.val();
+
+        if (passwordHash === storedHash) {
+            isAdminAuthenticated = true;
+            sessionStorage.setItem('adminAuthenticated', 'true');
+            document.getElementById('adminPassword').value = '';
+            showAdminDashboard();
+        } else {
+            showNotification('كلمة المرور غير صحيحة');
+        }
+    } catch (error) {
+        console.error('Error logging in:', error);
+        showNotification('حدث خطأ في تسجيل الدخول');
+    }
+}
+
+// Admin logout
+function adminLogout() {
+    isAdminAuthenticated = false;
+    sessionStorage.removeItem('adminAuthenticated');
+    showAdminLogin();
+    showNotification('تم تسجيل الخروج');
+}
+
+// ============================================
 // ADMIN DASHBOARD
 // ============================================
 
-// Get stored admin sessions from localStorage
-function getAdminSessions() {
-    const sessions = localStorage.getItem('adminSessions');
-    return sessions ? JSON.parse(sessions) : [];
-}
-
-// Save admin session to localStorage
-function saveAdminSession(sessionId, adminKey, sessionName) {
-    const sessions = getAdminSessions();
-    // Check if session already exists
-    const existingIndex = sessions.findIndex(s => s.id === sessionId);
-    if (existingIndex >= 0) {
-        sessions[existingIndex] = { id: sessionId, key: adminKey, name: sessionName, updatedAt: Date.now() };
-    } else {
-        sessions.push({ id: sessionId, key: adminKey, name: sessionName, createdAt: Date.now() });
+// Save admin session to Firebase (synced across devices)
+async function saveAdminSession(sessionId, adminKey, sessionName) {
+    try {
+        await db.ref('admin/sessions/' + sessionId).set({
+            id: sessionId,
+            key: adminKey,
+            name: sessionName,
+            createdAt: Date.now()
+        });
+    } catch (error) {
+        console.error('Error saving admin session:', error);
     }
-    localStorage.setItem('adminSessions', JSON.stringify(sessions));
 }
 
-// Remove admin session from localStorage
-function removeAdminSession(sessionId) {
-    const sessions = getAdminSessions();
-    const filtered = sessions.filter(s => s.id !== sessionId);
-    localStorage.setItem('adminSessions', JSON.stringify(filtered));
+// Remove admin session from Firebase
+async function removeAdminSession(sessionId) {
+    try {
+        await db.ref('admin/sessions/' + sessionId).remove();
+    } catch (error) {
+        console.error('Error removing admin session:', error);
+    }
 }
 
 // Show admin dashboard
 function showAdminDashboard() {
+    if (!isAdminAuthenticated) {
+        showAdminLogin();
+        return;
+    }
+
     hideAllSections();
     document.getElementById('adminDashboardSection').style.display = 'block';
     document.getElementById('roleIndicator').innerHTML = '👑 مدير';
@@ -989,93 +1106,99 @@ function showAdminDashboard() {
     loadAdminSessions();
 }
 
-// Load and display admin sessions
+// Load and display admin sessions from Firebase
 async function loadAdminSessions() {
     const container = document.getElementById('sessionsListContainer');
-    const sessions = getAdminSessions();
-
-    if (sessions.length === 0) {
-        container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
-        return;
-    }
-
     container.innerHTML = '<div class="empty-message">جاري التحميل...</div>';
 
-    // Verify sessions still exist in Firebase and get updated info
-    const validSessions = [];
+    try {
+        // Get admin sessions from Firebase
+        const adminSessionsSnapshot = await db.ref('admin/sessions').once('value');
+        const adminSessions = adminSessionsSnapshot.val() || {};
 
-    for (const session of sessions) {
-        try {
-            const snapshot = await db.ref('sessions/' + session.id).once('value');
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                // Verify admin key matches
-                if (data.adminKey === session.key) {
-                    const participantCount = data.participants ? Object.keys(data.participants).length : 0;
-                    validSessions.push({
-                        ...session,
-                        name: data.name,
-                        status: data.status,
-                        participantCount: participantCount,
-                        createdAt: data.createdAt
-                    });
+        const sessionIds = Object.keys(adminSessions);
+
+        if (sessionIds.length === 0) {
+            container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
+            return;
+        }
+
+        // Verify sessions still exist and get updated info
+        const validSessions = [];
+
+        for (const sessionId of sessionIds) {
+            const session = adminSessions[sessionId];
+            try {
+                const snapshot = await db.ref('sessions/' + sessionId).once('value');
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    // Verify admin key matches
+                    if (data.adminKey === session.key) {
+                        const participantCount = data.participants ? Object.keys(data.participants).length : 0;
+                        validSessions.push({
+                            ...session,
+                            name: data.name,
+                            status: data.status,
+                            participantCount: participantCount,
+                            createdAt: data.createdAt
+                        });
+                    }
+                } else {
+                    // Session no longer exists, remove from admin list
+                    await db.ref('admin/sessions/' + sessionId).remove();
                 }
+            } catch (error) {
+                console.error('Error loading session:', sessionId, error);
             }
-        } catch (error) {
-            console.error('Error loading session:', session.id, error);
-        }
-    }
-
-    // Update localStorage with only valid sessions
-    localStorage.setItem('adminSessions', JSON.stringify(validSessions.map(s => ({
-        id: s.id,
-        key: s.key,
-        name: s.name
-    }))));
-
-    if (validSessions.length === 0) {
-        container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
-        return;
-    }
-
-    // Sort by creation date (newest first)
-    validSessions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-    // Render sessions
-    container.innerHTML = '';
-    validSessions.forEach(session => {
-        const item = document.createElement('div');
-        item.className = 'session-item';
-
-        let statusText = 'في الإعداد';
-        let statusClass = 'setup';
-        if (session.status === 'drawing') {
-            statusText = 'جاري السحب';
-            statusClass = 'drawing';
-        } else if (session.status === 'completed') {
-            statusText = 'مكتمل';
-            statusClass = 'completed';
         }
 
-        item.innerHTML = `
-            <div class="session-item-info">
-                <div class="session-item-name">${session.name}</div>
-                <div class="session-item-meta">
-                    <span class="session-status-badge ${statusClass}">${statusText}</span>
-                    <span class="participant-count">${session.participantCount} مشارك</span>
+        if (validSessions.length === 0) {
+            container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
+            return;
+        }
+
+        // Sort by creation date (newest first)
+        validSessions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        // Render sessions
+        container.innerHTML = '';
+        validSessions.forEach(session => {
+            const item = document.createElement('div');
+            item.className = 'session-item';
+
+            let statusText = 'في الإعداد';
+            let statusClass = 'setup';
+            if (session.status === 'drawing') {
+                statusText = 'جاري السحب';
+                statusClass = 'drawing';
+            } else if (session.status === 'completed') {
+                statusText = 'مكتمل';
+                statusClass = 'completed';
+            }
+
+            item.innerHTML = `
+                <div class="session-item-info">
+                    <div class="session-item-name">${session.name}</div>
+                    <div class="session-item-meta">
+                        <span class="session-status-badge ${statusClass}">${statusText}</span>
+                        <span class="participant-count">${session.participantCount} مشارك</span>
+                    </div>
                 </div>
-            </div>
-            <div class="session-item-actions">
-                <button onclick="openSession('${session.id}', '${session.key}')" class="vintage-button primary">
-                    فتح
-                </button>
-                <button onclick="deleteSessionFromDashboard('${session.id}', '${session.name}')" class="vintage-button danger">
-                    حذف
-                </button>
-            </div>
-        `;
-        container.appendChild(item);
-    });
+                <div class="session-item-actions">
+                    <button onclick="openSession('${session.id}', '${session.key}')" class="vintage-button primary">
+                        فتح
+                    </button>
+                    <button onclick="deleteSessionFromDashboard('${session.id}', '${session.name}')" class="vintage-button danger">
+                        حذف
+                    </button>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    } catch (error) {
+        console.error('Error loading admin sessions:', error);
+        container.innerHTML = '<div class="empty-message">حدث خطأ في تحميل الجلسات</div>';
+    }
 }
 
 // Open a session from the dashboard
@@ -1215,8 +1338,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     } else if (isAdminCreate) {
-        // Admin wants to access dashboard
-        showAdminDashboard();
+        // Admin wants to access dashboard - show login first
+        showAdminLogin();
     } else if (savedSession && savedRole) {
         // Restore from localStorage
         currentSession = savedSession;
