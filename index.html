@@ -28,6 +28,25 @@
                 </div>
             </section>
 
+            <!-- Admin Dashboard (Session List) -->
+            <section class="admin-dashboard-section" id="adminDashboardSection" style="display: none;">
+                <h2>لوحة المدير</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">إدارة جلسات سحب الأسماء</p>
+
+                <!-- Create New Session Button -->
+                <button onclick="showCreateSession()" class="vintage-button primary" style="width: 100%; margin-bottom: 2rem;">
+                    + إنشاء جلسة جديدة
+                </button>
+
+                <!-- Sessions List -->
+                <div class="sessions-list-container">
+                    <h3>الجلسات السابقة</h3>
+                    <div id="sessionsListContainer">
+                        <div class="empty-message">جاري التحميل...</div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Create Session Modal -->
             <section class="create-session-section" id="createSessionSection" style="display: none;">
                 <h2>إنشاء جلسة جديدة</h2>
@@ -41,7 +60,7 @@
                     <button onclick="createSession()" class="vintage-button primary">
                         إنشاء
                     </button>
-                    <button onclick="backToLanding()" class="vintage-button secondary">
+                    <button onclick="backToAdminDashboard()" class="vintage-button secondary">
                         إلغاء
                     </button>
                 </div>
@@ -49,7 +68,12 @@
 
             <!-- Organizer View -->
             <section class="organizer-section" id="organizerSection" style="display: none;">
-                <h2>لوحة التحكم</h2>
+                <div class="section-header">
+                    <h2>لوحة التحكم</h2>
+                    <button onclick="backToAdminDashboard()" class="vintage-button secondary back-btn">
+                        ← كل الجلسات
+                    </button>
+                </div>
 
                 <!-- Session Info -->
                 <div class="session-info">
@@ -65,11 +89,23 @@
                             <button onclick="shareTelegram()" class="vintage-button">Telegram</button>
                         </div>
                     </div>
+                    <!-- Registration Toggle -->
+                    <div class="registration-toggle">
+                        <button onclick="toggleRegistration()" class="vintage-button" id="registrationToggleBtn">
+                            إغلاق التسجيل
+                        </button>
+                        <span class="registration-status" id="registrationStatus">التسجيل مفتوح</span>
+                    </div>
                 </div>
 
                 <!-- Participants List -->
                 <div class="participants-management">
                     <h3>المشاركون (<span id="participantCount">0</span>)</h3>
+                    <!-- Add Participant Manually -->
+                    <div class="add-participant-manual">
+                        <input type="text" id="manualParticipantName" placeholder="أضف مشارك يدوياً" class="vintage-input">
+                        <button onclick="addParticipantManually()" class="vintage-button">إضافة</button>
+                    </div>
                     <ul id="organizerParticipantsList" class="participants-list"></ul>
                 </div>
 
@@ -96,6 +132,28 @@
                             إعادة تعيين
                         </button>
                     </div>
+                </div>
+
+                <!-- View All Assignments (Hidden by default) -->
+                <div class="view-results-section" id="viewResultsSection" style="display: none;">
+                    <h3>عرض النتائج</h3>
+                    <button onclick="showAllAssignments()" class="vintage-button" id="showResultsBtn">
+                        عرض جميع النتائج
+                    </button>
+                    <div class="all-assignments" id="allAssignmentsContainer" style="display: none;">
+                        <div id="assignmentsList"></div>
+                        <button onclick="hideAllAssignments()" class="vintage-button secondary">
+                            إخفاء النتائج
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="danger-zone">
+                    <h3>منطقة الخطر</h3>
+                    <button onclick="deleteSession()" class="vintage-button danger">
+                        حذف الجلسة
+                    </button>
                 </div>
             </section>
 

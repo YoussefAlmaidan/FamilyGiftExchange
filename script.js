@@ -80,6 +80,7 @@ function getBaseUrl() {
 
 function hideAllSections() {
     document.getElementById('landingSection').style.display = 'none';
+    document.getElementById('adminDashboardSection').style.display = 'none';
     document.getElementById('createSessionSection').style.display = 'none';
     document.getElementById('organizerSection').style.display = 'none';
     document.getElementById('participantSection').style.display = 'none';
@@ -128,6 +129,9 @@ async function createSession() {
         localStorage.setItem('currentRole', 'organizer');
         localStorage.setItem('adminKey', adminKey);
 
+        // Save to admin sessions list
+        saveAdminSession(sessionId, adminKey, sessionName);
+
         // Update URL
         const organizerUrl = `${getBaseUrl()}?session=${sessionId}&role=organizer&key=${adminKey}`;
         window.history.pushState({}, '', organizerUrl);
@@ -135,6 +139,10 @@ async function createSession() {
         currentSession = sessionId;
         currentRole = 'organizer';
         currentUserName = organizerName;
+
+        // Clear form inputs
+        document.getElementById('sessionName').value = '';
+        document.getElementById('organizerName').value = '';
 
         initializeOrganizerView();
         showNotification('تم إنشاء الجلسة بنجاح!');
@@ -158,8 +166,16 @@ async function joinSession(sessionId, userName) {
             return;
         }
 
+        const sessionData = sessionSnapshot.val();
+
+        // Check if registration is closed
+        if (sessionData.registrationClosed) {
+            showNotification('التسجيل مغلق. لا يمكن الانضمام حالياً');
+            return;
+        }
+
         // Check for duplicate names
-        const participants = sessionSnapshot.val().participants || {};
+        const participants = sessionData.participants || {};
         const existingNames = Object.values(participants).map(p => p.name);
 
         if (existingNames.includes(userName)) {
@@ -234,6 +250,14 @@ async function loadOrganizerData() {
         // Generate and display participant link
         const participantUrl = `${getBaseUrl()}?session=${currentSession}`;
         document.getElementById('sessionLink').value = participantUrl;
+
+        // Update registration status UI
+        updateRegistrationUI(sessionData.registrationClosed || false);
+
+        // Show view results section if draw has started
+        if (sessionData.status === 'drawing' || sessionData.status === 'completed') {
+            document.getElementById('viewResultsSection').style.display = 'block';
+        }
     } catch (error) {
         console.error('Error loading organizer data:', error);
     }
@@ -245,6 +269,16 @@ function listenToParticipants() {
         updateOrganizerParticipantsList();
         updateRestrictionsInterface();
         updateOrganizerProgress();
+    });
+
+    // Listen to session status for showing view results section
+    db.ref('sessions/' + currentSession + '/status').on('value', (snapshot) => {
+        const status = snapshot.val();
+        if (status === 'drawing' || status === 'completed') {
+            document.getElementById('viewResultsSection').style.display = 'block';
+        } else {
+            document.getElementById('viewResultsSection').style.display = 'none';
+        }
     });
 }
 
@@ -647,6 +681,344 @@ function fallbackCopyText(text) {
 }
 
 // ============================================
+// ADMIN CONTROLS
+// ============================================
+
+// Toggle registration open/closed
+async function toggleRegistration() {
+    try {
+        const snapshot = await db.ref('sessions/' + currentSession + '/registrationClosed').once('value');
+        const isClosed = snapshot.val() || false;
+
+        await db.ref('sessions/' + currentSession + '/registrationClosed').set(!isClosed);
+
+        updateRegistrationUI(!isClosed);
+        showNotification(isClosed ? 'تم فتح التسجيل' : 'تم إغلاق التسجيل');
+    } catch (error) {
+        console.error('Error toggling registration:', error);
+        showNotification('حدث خطأ');
+    }
+}
+
+function updateRegistrationUI(isClosed) {
+    const btn = document.getElementById('registrationToggleBtn');
+    const status = document.getElementById('registrationStatus');
+
+    if (isClosed) {
+        btn.textContent = 'فتح التسجيل';
+        btn.classList.add('closed');
+        status.textContent = 'التسجيل مغلق';
+        status.classList.add('closed');
+    } else {
+        btn.textContent = 'إغلاق التسجيل';
+        btn.classList.remove('closed');
+        status.textContent = 'التسجيل مفتوح';
+        status.classList.remove('closed');
+    }
+}
+
+// Add participant manually
+async function addParticipantManually() {
+    const nameInput = document.getElementById('manualParticipantName');
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        showNotification('الرجاء إدخال اسم');
+        return;
+    }
+
+    // Check for duplicate names
+    const existingNames = Object.values(participantsData).map(p => p.name);
+    if (existingNames.includes(name)) {
+        showNotification('هذا الاسم موجود بالفعل');
+        return;
+    }
+
+    try {
+        const participantId = 'participant_' + Date.now();
+        await db.ref('sessions/' + currentSession + '/participants/' + participantId).set({
+            name: name,
+            hasDrawn: false,
+            isExcluded: false,
+            addedManually: true,
+            joinedAt: Date.now()
+        });
+
+        nameInput.value = '';
+        showNotification('تمت إضافة ' + name);
+    } catch (error) {
+        console.error('Error adding participant:', error);
+        showNotification('حدث خطأ في الإضافة');
+    }
+}
+
+// Show all assignments (with confirmation)
+function showAllAssignments() {
+    if (!confirm('هل أنت متأكد؟ سيتم عرض جميع النتائج')) {
+        return;
+    }
+
+    displayAllAssignments();
+}
+
+async function displayAllAssignments() {
+    try {
+        const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
+        const assignments = snapshot.val();
+
+        if (!assignments || Object.keys(assignments).length === 0) {
+            showNotification('لا توجد نتائج بعد');
+            return;
+        }
+
+        const container = document.getElementById('assignmentsList');
+        container.innerHTML = '';
+
+        Object.entries(assignments).forEach(([giver, receiver]) => {
+            const item = document.createElement('div');
+            item.className = 'assignment-item';
+            item.innerHTML = `
+                <span class="giver-name">${giver}</span>
+                <span class="assignment-arrow">→</span>
+                <span class="receiver-name">${receiver}</span>
+            `;
+            container.appendChild(item);
+        });
+
+        document.getElementById('allAssignmentsContainer').style.display = 'block';
+        document.getElementById('showResultsBtn').style.display = 'none';
+    } catch (error) {
+        console.error('Error displaying assignments:', error);
+        showNotification('حدث خطأ في عرض النتائج');
+    }
+}
+
+function hideAllAssignments() {
+    document.getElementById('allAssignmentsContainer').style.display = 'none';
+    document.getElementById('showResultsBtn').style.display = 'inline-block';
+}
+
+// Delete session
+async function deleteSession() {
+    const sessionSnapshot = await db.ref('sessions/' + currentSession + '/name').once('value');
+    const sessionName = sessionSnapshot.val() || 'هذه الجلسة';
+
+    if (!confirm(`هل أنت متأكد من حذف "${sessionName}"؟\n\nسيتم حذف جميع البيانات نهائياً ولا يمكن التراجع.`)) {
+        return;
+    }
+
+    // Double confirmation for safety
+    if (!confirm('تأكيد نهائي: سيتم حذف الجلسة وجميع بياناتها. متابعة؟')) {
+        return;
+    }
+
+    try {
+        await db.ref('sessions/' + currentSession).remove();
+
+        // Clear localStorage
+        localStorage.removeItem('currentSession');
+        localStorage.removeItem('currentRole');
+        localStorage.removeItem('adminKey');
+        localStorage.removeItem('currentUserName');
+        localStorage.removeItem('participantId');
+
+        showNotification('تم حذف الجلسة');
+
+        // Redirect to landing/admin page
+        setTimeout(() => {
+            window.location.href = getBaseUrl() + '?role=admin';
+        }, 1000);
+    } catch (error) {
+        console.error('Error deleting session:', error);
+        showNotification('حدث خطأ في حذف الجلسة');
+    }
+}
+
+// ============================================
+// ADMIN DASHBOARD
+// ============================================
+
+// Get stored admin sessions from localStorage
+function getAdminSessions() {
+    const sessions = localStorage.getItem('adminSessions');
+    return sessions ? JSON.parse(sessions) : [];
+}
+
+// Save admin session to localStorage
+function saveAdminSession(sessionId, adminKey, sessionName) {
+    const sessions = getAdminSessions();
+    // Check if session already exists
+    const existingIndex = sessions.findIndex(s => s.id === sessionId);
+    if (existingIndex >= 0) {
+        sessions[existingIndex] = { id: sessionId, key: adminKey, name: sessionName, updatedAt: Date.now() };
+    } else {
+        sessions.push({ id: sessionId, key: adminKey, name: sessionName, createdAt: Date.now() });
+    }
+    localStorage.setItem('adminSessions', JSON.stringify(sessions));
+}
+
+// Remove admin session from localStorage
+function removeAdminSession(sessionId) {
+    const sessions = getAdminSessions();
+    const filtered = sessions.filter(s => s.id !== sessionId);
+    localStorage.setItem('adminSessions', JSON.stringify(filtered));
+}
+
+// Show admin dashboard
+function showAdminDashboard() {
+    hideAllSections();
+    document.getElementById('adminDashboardSection').style.display = 'block';
+    document.getElementById('roleIndicator').innerHTML = '👑 مدير';
+
+    // Update URL
+    window.history.pushState({}, '', getBaseUrl() + '?role=admin');
+
+    loadAdminSessions();
+}
+
+// Load and display admin sessions
+async function loadAdminSessions() {
+    const container = document.getElementById('sessionsListContainer');
+    const sessions = getAdminSessions();
+
+    if (sessions.length === 0) {
+        container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
+        return;
+    }
+
+    container.innerHTML = '<div class="empty-message">جاري التحميل...</div>';
+
+    // Verify sessions still exist in Firebase and get updated info
+    const validSessions = [];
+
+    for (const session of sessions) {
+        try {
+            const snapshot = await db.ref('sessions/' + session.id).once('value');
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                // Verify admin key matches
+                if (data.adminKey === session.key) {
+                    const participantCount = data.participants ? Object.keys(data.participants).length : 0;
+                    validSessions.push({
+                        ...session,
+                        name: data.name,
+                        status: data.status,
+                        participantCount: participantCount,
+                        createdAt: data.createdAt
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error loading session:', session.id, error);
+        }
+    }
+
+    // Update localStorage with only valid sessions
+    localStorage.setItem('adminSessions', JSON.stringify(validSessions.map(s => ({
+        id: s.id,
+        key: s.key,
+        name: s.name
+    }))));
+
+    if (validSessions.length === 0) {
+        container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
+        return;
+    }
+
+    // Sort by creation date (newest first)
+    validSessions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    // Render sessions
+    container.innerHTML = '';
+    validSessions.forEach(session => {
+        const item = document.createElement('div');
+        item.className = 'session-item';
+
+        let statusText = 'في الإعداد';
+        let statusClass = 'setup';
+        if (session.status === 'drawing') {
+            statusText = 'جاري السحب';
+            statusClass = 'drawing';
+        } else if (session.status === 'completed') {
+            statusText = 'مكتمل';
+            statusClass = 'completed';
+        }
+
+        item.innerHTML = `
+            <div class="session-item-info">
+                <div class="session-item-name">${session.name}</div>
+                <div class="session-item-meta">
+                    <span class="session-status-badge ${statusClass}">${statusText}</span>
+                    <span class="participant-count">${session.participantCount} مشارك</span>
+                </div>
+            </div>
+            <div class="session-item-actions">
+                <button onclick="openSession('${session.id}', '${session.key}')" class="vintage-button primary">
+                    فتح
+                </button>
+                <button onclick="deleteSessionFromDashboard('${session.id}', '${session.name}')" class="vintage-button danger">
+                    حذف
+                </button>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
+
+// Open a session from the dashboard
+function openSession(sessionId, adminKey) {
+    currentSession = sessionId;
+    currentRole = 'organizer';
+
+    // Save to localStorage
+    localStorage.setItem('currentSession', sessionId);
+    localStorage.setItem('currentRole', 'organizer');
+    localStorage.setItem('adminKey', adminKey);
+
+    // Update URL
+    const organizerUrl = `${getBaseUrl()}?session=${sessionId}&role=organizer&key=${adminKey}`;
+    window.history.pushState({}, '', organizerUrl);
+
+    // Load organizer name
+    db.ref('sessions/' + sessionId + '/createdBy').once('value').then(snapshot => {
+        currentUserName = snapshot.val();
+        initializeOrganizerView();
+    });
+}
+
+// Delete session from dashboard
+async function deleteSessionFromDashboard(sessionId, sessionName) {
+    if (!confirm(`هل أنت متأكد من حذف "${sessionName}"؟\n\nسيتم حذف جميع البيانات نهائياً.`)) {
+        return;
+    }
+
+    try {
+        await db.ref('sessions/' + sessionId).remove();
+        removeAdminSession(sessionId);
+        showNotification('تم حذف الجلسة');
+        loadAdminSessions(); // Refresh the list
+    } catch (error) {
+        console.error('Error deleting session:', error);
+        showNotification('حدث خطأ في حذف الجلسة');
+    }
+}
+
+// Back to admin dashboard
+function backToAdminDashboard() {
+    // Detach any Firebase listeners
+    if (currentSession) {
+        db.ref('sessions/' + currentSession + '/participants').off();
+        db.ref('sessions/' + currentSession + '/status').off();
+        db.ref('sessions/' + currentSession).off();
+    }
+
+    currentSession = null;
+    currentRole = null;
+
+    showAdminDashboard();
+}
+
+// ============================================
 // LINK SHARING
 // ============================================
 
@@ -700,14 +1072,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } else {
-            // Participant needs to enter name
-            hideAllSections();
-            document.getElementById('landingSection').style.display = 'block';
+            // Check if participant already joined this session
+            const savedParticipantSession = localStorage.getItem('currentSession');
+            const savedParticipantId = localStorage.getItem('participantId');
+            const savedUserName = localStorage.getItem('currentUserName');
+
+            if (savedParticipantSession === params.session && savedParticipantId && savedUserName) {
+                // Verify participant still exists in Firebase
+                db.ref('sessions/' + params.session + '/participants/' + savedParticipantId).once('value').then(snapshot => {
+                    if (snapshot.exists() && snapshot.val().name === savedUserName) {
+                        // Participant already joined - restore their session
+                        currentRole = 'participant';
+                        currentUserName = savedUserName;
+                        initializeParticipantView();
+                    } else {
+                        // Participant data doesn't match - clear and show join screen
+                        localStorage.removeItem('currentSession');
+                        localStorage.removeItem('currentRole');
+                        localStorage.removeItem('currentUserName');
+                        localStorage.removeItem('participantId');
+                        hideAllSections();
+                        document.getElementById('landingSection').style.display = 'block';
+                    }
+                });
+            } else {
+                // New participant needs to enter name
+                hideAllSections();
+                document.getElementById('landingSection').style.display = 'block';
+            }
         }
     } else if (isAdminCreate) {
-        // Admin wants to create a new session
-        hideAllSections();
-        document.getElementById('createSessionSection').style.display = 'block';
+        // Admin wants to access dashboard
+        showAdminDashboard();
     } else if (savedSession && savedRole) {
         // Restore from localStorage
         currentSession = savedSession;
@@ -720,9 +1116,23 @@ document.addEventListener('DOMContentLoaded', function() {
             window.history.pushState({}, '', organizerUrl);
             initializeOrganizerView();
         } else {
-            const participantUrl = `${getBaseUrl()}?session=${currentSession}`;
-            window.history.pushState({}, '', participantUrl);
-            initializeParticipantView();
+            // Verify participant still exists in Firebase before restoring
+            const savedParticipantId = localStorage.getItem('participantId');
+            db.ref('sessions/' + savedSession + '/participants/' + savedParticipantId).once('value').then(snapshot => {
+                if (snapshot.exists() && snapshot.val().name === currentUserName) {
+                    const participantUrl = `${getBaseUrl()}?session=${currentSession}`;
+                    window.history.pushState({}, '', participantUrl);
+                    initializeParticipantView();
+                } else {
+                    // Session or participant no longer exists - clear localStorage
+                    localStorage.removeItem('currentSession');
+                    localStorage.removeItem('currentRole');
+                    localStorage.removeItem('currentUserName');
+                    localStorage.removeItem('participantId');
+                    hideAllSections();
+                    document.getElementById('landingSection').style.display = 'block';
+                }
+            });
         }
     } else {
         // Show landing page (participant join only)
