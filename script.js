@@ -6,6 +6,211 @@ let currentRole = null; // 'organizer' or 'participant'
 let currentUserName = null;
 let participantsData = {};
 let restrictionsData = {};
+let adminLanguage = localStorage.getItem('adminLanguage') || 'ar';
+
+// ============================================
+// TRANSLATIONS (Admin Panel Only)
+// ============================================
+
+const translations = {
+    ar: {
+        // Login
+        adminLogin: 'دخول المدير',
+        enterPassword: 'أدخل كلمة المرور للوصول إلى لوحة التحكم',
+        password: 'كلمة المرور',
+        login: 'دخول',
+        setupPassword: 'لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:',
+        newPassword: 'كلمة المرور الجديدة',
+        confirmPassword: 'تأكيد كلمة المرور',
+        createPassword: 'إنشاء كلمة المرور',
+        // Dashboard
+        adminDashboard: 'لوحة المدير',
+        logout: 'تسجيل خروج',
+        manageSessions: 'إدارة جلسات سحب الأسماء',
+        createNewSession: '+ إنشاء جلسة جديدة',
+        previousSessions: 'الجلسات السابقة',
+        loading: 'جاري التحميل...',
+        noSessions: 'لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.',
+        open: 'فتح',
+        delete: 'حذف',
+        participant: 'مشارك',
+        setup: 'في الإعداد',
+        drawing: 'جاري السحب',
+        completed: 'مكتمل',
+        // Create Session
+        createNewSessionTitle: 'إنشاء جلسة جديدة',
+        sessionNamePlaceholder: 'اسم الجلسة (مثال: عائلة 2026)',
+        yourName: 'اسمك',
+        create: 'إنشاء',
+        cancel: 'إلغاء',
+        // Organizer View
+        controlPanel: 'لوحة التحكم',
+        allSessions: '← كل الجلسات',
+        shareLink: 'رابط المشاركة:',
+        copy: '📋 نسخ',
+        closeRegistration: 'إغلاق التسجيل',
+        openRegistration: 'فتح التسجيل',
+        registrationOpen: 'التسجيل مفتوح',
+        registrationClosed: 'التسجيل مغلق',
+        participants: 'المشاركون',
+        addManually: 'أضف مشارك يدوياً',
+        add: 'إضافة',
+        restrictionsOptional: 'القيود (اختياري)',
+        restrictionsHelp: 'حدد من لا يمكن أن يسحب بعضهم بعضاً',
+        startDraw: 'بدء السحب',
+        reset: 'إعادة تعيين',
+        viewResults: 'عرض النتائج',
+        showAllResults: 'عرض جميع النتائج',
+        hideResults: 'إخفاء النتائج',
+        reveal: '👁️ كشف',
+        hide: 'إخفاء',
+        dangerZone: 'منطقة الخطر',
+        deleteSession: 'حذف الجلسة',
+        drewCount: '{drawn} من {total} سحبوا',
+        cannotDraw: '{name} لا يمكنه سحب:',
+        include: 'تضمين',
+        exclude: 'استبعاد',
+        // Change Password
+        changePassword: 'تغيير كلمة المرور',
+        currentPassword: 'كلمة المرور الحالية',
+        changePasswordBtn: 'تغيير كلمة المرور',
+        // Lang toggle
+        langToggle: 'English'
+    },
+    en: {
+        // Login
+        adminLogin: 'Admin Login',
+        enterPassword: 'Enter password to access control panel',
+        password: 'Password',
+        login: 'Login',
+        setupPassword: 'No password set. Create a new password:',
+        newPassword: 'New password',
+        confirmPassword: 'Confirm password',
+        createPassword: 'Create Password',
+        // Dashboard
+        adminDashboard: 'Admin Dashboard',
+        logout: 'Logout',
+        manageSessions: 'Manage gift exchange sessions',
+        createNewSession: '+ Create New Session',
+        previousSessions: 'Previous Sessions',
+        loading: 'Loading...',
+        noSessions: 'No previous sessions. Create a new one to start.',
+        open: 'Open',
+        delete: 'Delete',
+        participant: 'participant',
+        setup: 'Setup',
+        drawing: 'Drawing',
+        completed: 'Completed',
+        // Create Session
+        createNewSessionTitle: 'Create New Session',
+        sessionNamePlaceholder: 'Session name (e.g., Family 2026)',
+        yourName: 'Your name',
+        create: 'Create',
+        cancel: 'Cancel',
+        // Organizer View
+        controlPanel: 'Control Panel',
+        allSessions: '← All Sessions',
+        shareLink: 'Share link:',
+        copy: '📋 Copy',
+        closeRegistration: 'Close Registration',
+        openRegistration: 'Open Registration',
+        registrationOpen: 'Registration open',
+        registrationClosed: 'Registration closed',
+        participants: 'Participants',
+        addManually: 'Add participant manually',
+        add: 'Add',
+        restrictionsOptional: 'Restrictions (optional)',
+        restrictionsHelp: 'Set who cannot draw each other',
+        startDraw: 'Start Draw',
+        reset: 'Reset',
+        viewResults: 'View Results',
+        showAllResults: 'Show All Results',
+        hideResults: 'Hide Results',
+        reveal: '👁️ Reveal',
+        hide: 'Hide',
+        dangerZone: 'Danger Zone',
+        deleteSession: 'Delete Session',
+        drewCount: '{drawn} of {total} drew',
+        cannotDraw: '{name} cannot draw:',
+        include: 'Include',
+        exclude: 'Exclude',
+        // Change Password
+        changePassword: 'Change Password',
+        currentPassword: 'Current password',
+        changePasswordBtn: 'Change Password',
+        // Lang toggle
+        langToggle: 'العربية'
+    }
+};
+
+function toggleAdminLanguage() {
+    adminLanguage = adminLanguage === 'ar' ? 'en' : 'ar';
+    localStorage.setItem('adminLanguage', adminLanguage);
+    applyAdminTranslations();
+
+    // Re-render dynamic content based on current view
+    if (currentRole === 'organizer' && currentSession) {
+        updateOrganizerParticipantsList();
+        updateRestrictionsInterface();
+        updateOrganizerProgress();
+        loadIndividualAssignments();
+        // Re-apply registration UI
+        db.ref('sessions/' + currentSession + '/registrationClosed').once('value').then(snapshot => {
+            updateRegistrationUI(snapshot.val() || false);
+        });
+    }
+
+    // Re-render admin dashboard if visible
+    const dashboardSection = document.getElementById('adminDashboardSection');
+    if (dashboardSection && dashboardSection.style.display !== 'none') {
+        loadAdminSessions();
+    }
+}
+
+function applyAdminTranslations() {
+    const t = translations[adminLanguage];
+
+    // Update language toggle buttons
+    const langBtns = ['langToggleBtn', 'langToggleBtnDash', 'langToggleBtnOrg'];
+    langBtns.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.textContent = t.langToggle;
+    });
+
+    // Update all elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) {
+            el.textContent = t[key];
+        }
+    });
+
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key]) {
+            el.placeholder = t[key];
+        }
+    });
+
+    // Update document direction for admin sections only
+    const adminSections = ['adminLoginSection', 'adminDashboardSection', 'createSessionSection', 'organizerSection'];
+    adminSections.forEach(id => {
+        const section = document.getElementById(id);
+        if (section) {
+            section.style.direction = adminLanguage === 'ar' ? 'rtl' : 'ltr';
+            section.style.textAlign = adminLanguage === 'ar' ? 'right' : 'left';
+        }
+    });
+}
+
+function t(key, replacements = {}) {
+    let text = translations[adminLanguage][key] || key;
+    Object.keys(replacements).forEach(k => {
+        text = text.replace(`{${k}}`, replacements[k]);
+    });
+    return text;
+}
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -241,6 +446,9 @@ function initializeOrganizerView() {
     document.getElementById('organizerSection').style.display = 'block';
     document.getElementById('roleIndicator').innerHTML = '👑 منظم';
 
+    // Apply translations for admin panel
+    applyAdminTranslations();
+
     // Load session data
     loadOrganizerData();
 
@@ -302,7 +510,10 @@ function updateOrganizerParticipantsList() {
     count.textContent = participants.length;
 
     if (participants.length === 0) {
-        list.innerHTML = '<div class="empty-message">لا يوجد مشاركون حتى الآن. شارك الرابط مع عائلتك!</div>';
+        const emptyMsg = adminLanguage === 'en'
+            ? 'No participants yet. Share the link with your family!'
+            : 'لا يوجد مشاركون حتى الآن. شارك الرابط مع عائلتك!';
+        list.innerHTML = `<div class="empty-message">${emptyMsg}</div>`;
         return;
     }
 
@@ -328,9 +539,9 @@ function updateOrganizerParticipantsList() {
             <div class="participant-actions">
                 <button class="toggle-exclude-btn ${data.isExcluded ? 'excluded' : ''}"
                         onclick="toggleExclusion('${id}')">
-                    ${data.isExcluded ? 'تضمين' : 'استبعاد'}
+                    ${data.isExcluded ? t('include') : t('exclude')}
                 </button>
-                <button class="remove-btn" onclick="removeParticipant('${id}')">حذف</button>
+                <button class="remove-btn" onclick="removeParticipant('${id}')">${t('delete')}</button>
             </div>
         `;
         list.appendChild(li);
@@ -344,7 +555,10 @@ function updateRestrictionsInterface() {
     const participants = Object.entries(participantsData);
 
     if (participants.length < 2) {
-        container.innerHTML = '<p class="help-text">أضف مشاركين أولاً لتعيين القيود</p>';
+        const helpText = adminLanguage === 'en'
+            ? 'Add participants first to set restrictions'
+            : 'أضف مشاركين أولاً لتعيين القيود';
+        container.innerHTML = `<p class="help-text">${helpText}</p>`;
         return;
     }
 
@@ -371,10 +585,11 @@ function updateRestrictionsInterface() {
             `;
         }).join('');
 
+        const noOptionsText = adminLanguage === 'en' ? 'No options' : 'لا توجد خيارات';
         restrictionBox.innerHTML = `
-            <div class="restriction-header">${data.name} لا يمكنه سحب:</div>
+            <div class="restriction-header">${t('cannotDraw', { name: data.name })}</div>
             <div class="restriction-options" id="restrictions-${data.name}">
-                ${checkboxes || '<span class="no-options">لا توجد خيارات</span>'}
+                ${checkboxes || `<span class="no-options">${noOptionsText}</span>`}
             </div>
         `;
 
@@ -424,7 +639,7 @@ function updateOrganizerProgress() {
     const drawnCount = includedParticipants.filter(p => p.hasDrawn).length;
     const total = includedParticipants.length;
 
-    document.getElementById('organizerProgressText').textContent = `${drawnCount} من ${total} سحبوا`;
+    document.getElementById('organizerProgressText').textContent = t('drewCount', { drawn: drawnCount, total: total });
     const percentage = total > 0 ? (drawnCount / total) * 100 : 0;
     document.getElementById('organizerProgressFill').style.width = percentage + '%';
 }
@@ -755,14 +970,14 @@ function updateRegistrationUI(isClosed) {
     const status = document.getElementById('registrationStatus');
 
     if (isClosed) {
-        btn.textContent = 'فتح التسجيل';
+        btn.textContent = t('openRegistration');
         btn.classList.add('closed');
-        status.textContent = 'التسجيل مغلق';
+        status.textContent = t('registrationClosed');
         status.classList.add('closed');
     } else {
-        btn.textContent = 'إغلاق التسجيل';
+        btn.textContent = t('closeRegistration');
         btn.classList.remove('closed');
-        status.textContent = 'التسجيل مفتوح';
+        status.textContent = t('registrationOpen');
         status.classList.remove('closed');
     }
 }
@@ -872,7 +1087,7 @@ async function loadIndividualAssignments() {
                 <div class="individual-giver">${giver}</div>
                 <div class="individual-hidden">
                     <button onclick="revealIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small">
-                        👁️ كشف
+                        ${t('reveal')}
                     </button>
                 </div>
             `;
@@ -884,7 +1099,8 @@ async function loadIndividualAssignments() {
 }
 
 function revealIndividualAssignment(giver, receiver) {
-    if (!confirm(`هل تريد كشف نتيجة ${giver}؟`)) {
+    const confirmMsg = adminLanguage === 'en' ? `Reveal ${giver}'s result?` : `هل تريد كشف نتيجة ${giver}؟`;
+    if (!confirm(confirmMsg)) {
         return;
     }
 
@@ -897,7 +1113,7 @@ function revealIndividualAssignment(giver, receiver) {
             <div class="individual-arrow">→</div>
             <div class="individual-receiver">${receiver}</div>
             <button onclick="hideIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small secondary">
-                إخفاء
+                ${t('hide')}
             </button>
         `;
         item.classList.add('revealed');
@@ -913,7 +1129,7 @@ function hideIndividualAssignment(giver, receiver) {
             <div class="individual-giver">${giver}</div>
             <div class="individual-hidden">
                 <button onclick="revealIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small">
-                    👁️ كشف
+                    ${t('reveal')}
                 </button>
             </div>
         `;
@@ -979,6 +1195,9 @@ async function showAdminLogin() {
     hideAllSections();
     document.getElementById('adminLoginSection').style.display = 'block';
     document.getElementById('roleIndicator').innerHTML = '';
+
+    // Apply translations
+    applyAdminTranslations();
 
     // Check if password is already set up
     const isSetup = await checkAdminSetup();
@@ -1062,6 +1281,60 @@ function adminLogout() {
     showNotification('تم تسجيل الخروج');
 }
 
+// Change admin password
+async function changeAdminPassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPasswordChange').value;
+    const confirmPassword = document.getElementById('confirmPasswordChange').value;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        const msg = adminLanguage === 'en' ? 'Please fill in all fields' : 'الرجاء ملء جميع الحقول';
+        showNotification(msg);
+        return;
+    }
+
+    if (newPassword.length < 4) {
+        const msg = adminLanguage === 'en' ? 'Password must be at least 4 characters' : 'كلمة المرور يجب أن تكون 4 أحرف على الأقل';
+        showNotification(msg);
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        const msg = adminLanguage === 'en' ? 'New passwords do not match' : 'كلمات المرور الجديدة غير متطابقة';
+        showNotification(msg);
+        return;
+    }
+
+    try {
+        // Verify current password
+        const currentHash = await hashPassword(currentPassword);
+        const snapshot = await db.ref('admin/passwordHash').once('value');
+        const storedHash = snapshot.val();
+
+        if (currentHash !== storedHash) {
+            const msg = adminLanguage === 'en' ? 'Current password is incorrect' : 'كلمة المرور الحالية غير صحيحة';
+            showNotification(msg);
+            return;
+        }
+
+        // Set new password
+        const newHash = await hashPassword(newPassword);
+        await db.ref('admin/passwordHash').set(newHash);
+
+        // Clear form
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPasswordChange').value = '';
+        document.getElementById('confirmPasswordChange').value = '';
+
+        const msg = adminLanguage === 'en' ? 'Password changed successfully!' : 'تم تغيير كلمة المرور بنجاح!';
+        showNotification(msg);
+    } catch (error) {
+        console.error('Error changing password:', error);
+        const msg = adminLanguage === 'en' ? 'Error changing password' : 'حدث خطأ في تغيير كلمة المرور';
+        showNotification(msg);
+    }
+}
+
 // ============================================
 // ADMIN DASHBOARD
 // ============================================
@@ -1100,6 +1373,9 @@ function showAdminDashboard() {
     document.getElementById('adminDashboardSection').style.display = 'block';
     document.getElementById('roleIndicator').innerHTML = '👑 مدير';
 
+    // Apply translations
+    applyAdminTranslations();
+
     // Update URL
     window.history.pushState({}, '', getBaseUrl() + '?role=admin');
 
@@ -1109,7 +1385,7 @@ function showAdminDashboard() {
 // Load and display admin sessions from Firebase
 async function loadAdminSessions() {
     const container = document.getElementById('sessionsListContainer');
-    container.innerHTML = '<div class="empty-message">جاري التحميل...</div>';
+    container.innerHTML = `<div class="empty-message">${t('loading')}</div>`;
 
     try {
         // Get admin sessions from Firebase
@@ -1119,7 +1395,7 @@ async function loadAdminSessions() {
         const sessionIds = Object.keys(adminSessions);
 
         if (sessionIds.length === 0) {
-            container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
+            container.innerHTML = `<div class="empty-message">${t('noSessions')}</div>`;
             return;
         }
 
@@ -1153,7 +1429,7 @@ async function loadAdminSessions() {
         }
 
         if (validSessions.length === 0) {
-            container.innerHTML = '<div class="empty-message">لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.</div>';
+            container.innerHTML = `<div class="empty-message">${t('noSessions')}</div>`;
             return;
         }
 
@@ -1166,13 +1442,13 @@ async function loadAdminSessions() {
             const item = document.createElement('div');
             item.className = 'session-item';
 
-            let statusText = 'في الإعداد';
+            let statusText = t('setup');
             let statusClass = 'setup';
             if (session.status === 'drawing') {
-                statusText = 'جاري السحب';
+                statusText = t('drawing');
                 statusClass = 'drawing';
             } else if (session.status === 'completed') {
-                statusText = 'مكتمل';
+                statusText = t('completed');
                 statusClass = 'completed';
             }
 
@@ -1181,15 +1457,15 @@ async function loadAdminSessions() {
                     <div class="session-item-name">${session.name}</div>
                     <div class="session-item-meta">
                         <span class="session-status-badge ${statusClass}">${statusText}</span>
-                        <span class="participant-count">${session.participantCount} مشارك</span>
+                        <span class="participant-count">${session.participantCount} ${t('participant')}</span>
                     </div>
                 </div>
                 <div class="session-item-actions">
                     <button onclick="openSession('${session.id}', '${session.key}')" class="vintage-button primary">
-                        فتح
+                        ${t('open')}
                     </button>
                     <button onclick="deleteSessionFromDashboard('${session.id}', '${session.name}')" class="vintage-button danger">
-                        حذف
+                        ${t('delete')}
                     </button>
                 </div>
             `;
@@ -1197,7 +1473,8 @@ async function loadAdminSessions() {
         });
     } catch (error) {
         console.error('Error loading admin sessions:', error);
-        container.innerHTML = '<div class="empty-message">حدث خطأ في تحميل الجلسات</div>';
+        const errorText = adminLanguage === 'en' ? 'Error loading sessions' : 'حدث خطأ في تحميل الجلسات';
+        container.innerHTML = `<div class="empty-message">${errorText}</div>`;
     }
 }
 

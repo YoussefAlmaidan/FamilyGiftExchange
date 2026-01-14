@@ -1119,3 +1119,108 @@ h3 {
 .admin-header h2 {
     margin: 0;
 }
+
+.admin-header-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Section Header Buttons */
+.section-header-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Language Toggle */
+.lang-toggle {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.admin-login-section {
+    position: relative;
+}
+
+/* Scrollable Results Wrappers */
+.individual-assignments-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.assignments-list-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.individual-assignments-wrapper::-webkit-scrollbar,
+.assignments-list-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.individual-assignments-wrapper::-webkit-scrollbar-track,
+.assignments-list-wrapper::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.individual-assignments-wrapper::-webkit-scrollbar-thumb,
+.assignments-list-wrapper::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+/* Change Password Section */
+.change-password-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #F8F9FA;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.change-password-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.change-password-section .input-group {
+    margin-bottom: 1rem;
+}
+
+/* LTR Support for English */
+[dir="ltr"] .sessions-list-container {
+    text-align: left;
+}
+
+[dir="ltr"] .lang-toggle {
+    left: auto;
+    right: 1rem;
+}
+
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .admin-header-buttons {
+        justify-content: center;
+    }
+
+    .section-header-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .lang-toggle {
+        position: static;
+        margin-bottom: 1rem;
+    }
+}
