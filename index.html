@@ -137,7 +137,7 @@
                         <label data-i18n="shareLink">رابط المشاركة:</label>
                         <div class="link-display">
                             <input type="text" id="sessionLink" readonly class="link-input">
-                            <button onclick="copySessionLink()" class="vintage-button" data-i18n="copy">📋 نسخ</button>
+                            <button onclick="copySessionLink()" class="vintage-button" data-i18n="copy">نسخ</button>
                         </div>
                         <div class="share-buttons">
                             <button onclick="shareWhatsApp()" class="vintage-button">WhatsApp</button>
@@ -229,7 +229,7 @@
 
                 <!-- Waiting State -->
                 <div class="waiting-state" id="waitingState">
-                    <div class="waiting-animation">⏳</div>
+                    <div class="waiting-animation"></div>
                     <h3>جاري الانتظار...</h3>
                     <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
 
@@ -242,14 +242,14 @@
 
                 <!-- Excluded State -->
                 <div class="excluded-state" id="excludedState" style="display: none;">
-                    <div class="waiting-animation">⏰</div>
+                    <div class="waiting-animation"></div>
                     <h3>يرجى الانتظار</h3>
                     <p>سيتم إعلامك عندما يحين دورك</p>
                 </div>
 
                 <!-- Ready to Draw -->
                 <div class="ready-state" id="readyState" style="display: none;">
-                    <div class="ready-animation">✨</div>
+                    <div class="ready-animation"></div>
                     <h3>جاهز للسحب!</h3>
                     <button onclick="drawAsParticipant()" class="vintage-button primary large">
                         اسحب الآن
@@ -260,7 +260,7 @@
                 <div class="result-state" id="resultState" style="display: none;">
                     <div class="result-display" id="participantResultDisplay"></div>
                     <button onclick="copyResult()" class="vintage-button">
-                        📤 نسخ النتيجة
+                        نسخ النتيجة
                     </button>
                 </div>
             </section>

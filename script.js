@@ -47,7 +47,7 @@ const translations = {
         controlPanel: 'لوحة التحكم',
         allSessions: '← كل الجلسات',
         shareLink: 'رابط المشاركة:',
-        copy: '📋 نسخ',
+        copy: 'نسخ',
         closeRegistration: 'إغلاق التسجيل',
         openRegistration: 'فتح التسجيل',
         registrationOpen: 'التسجيل مفتوح',
@@ -62,7 +62,7 @@ const translations = {
         viewResults: 'عرض النتائج',
         showAllResults: 'عرض جميع النتائج',
         hideResults: 'إخفاء النتائج',
-        reveal: '👁️ كشف',
+        reveal: 'كشف',
         hide: 'إخفاء',
         dangerZone: 'منطقة الخطر',
         deleteSession: 'حذف الجلسة',
@@ -111,7 +111,7 @@ const translations = {
         controlPanel: 'Control Panel',
         allSessions: '← All Sessions',
         shareLink: 'Share link:',
-        copy: '📋 Copy',
+        copy: 'Copy',
         closeRegistration: 'Close Registration',
         openRegistration: 'Open Registration',
         registrationOpen: 'Registration open',
@@ -126,7 +126,7 @@ const translations = {
         viewResults: 'View Results',
         showAllResults: 'Show All Results',
         hideResults: 'Hide Results',
-        reveal: '👁️ Reveal',
+        reveal: 'Reveal',
         hide: 'Hide',
         dangerZone: 'Danger Zone',
         deleteSession: 'Delete Session',
@@ -444,7 +444,7 @@ function joinFromLanding() {
 function initializeOrganizerView() {
     hideAllSections();
     document.getElementById('organizerSection').style.display = 'block';
-    document.getElementById('roleIndicator').innerHTML = '👑 منظم';
+    document.getElementById('roleIndicator').innerHTML = '<span class="role-badge organizer"></span> منظم';
 
     // Apply translations for admin panel
     applyAdminTranslations();
@@ -520,20 +520,17 @@ function updateOrganizerParticipantsList() {
     participants.forEach(([id, data]) => {
         const li = document.createElement('li');
 
-        let statusBadge = '✓';
         let statusClass = 'joined';
 
         if (data.isExcluded) {
-            statusBadge = '🚫';
             statusClass = 'excluded';
         } else if (data.hasDrawn) {
-            statusBadge = '✓';
             statusClass = 'drawn';
         }
 
         li.innerHTML = `
             <span class="participant-info">
-                <span class="status-badge ${statusClass}">${statusBadge}</span>
+                <span class="status-badge ${statusClass}"></span>
                 <span class="participant-name">${data.name}</span>
             </span>
             <div class="participant-actions">
@@ -763,7 +760,7 @@ async function resetSession() {
 function initializeParticipantView() {
     hideAllSections();
     document.getElementById('participantSection').style.display = 'block';
-    document.getElementById('roleIndicator').innerHTML = '👥 مشارك';
+    document.getElementById('roleIndicator').innerHTML = '<span class="role-badge participant"></span> مشارك';
     document.getElementById('participantNameLabel').textContent = currentUserName;
 
     // Setup Firebase listeners
@@ -806,18 +803,15 @@ function updateWaitingParticipantsList(participants, currentParticipantId) {
         const li = document.createElement('li');
         li.className = 'waiting-participant-item';
 
-        let statusIcon = '👤';
-        let statusClass = '';
+        let statusClass = 'active';
         if (data.isExcluded) {
-            statusIcon = '⏸️';
             statusClass = 'excluded';
         } else if (data.hasDrawn) {
-            statusIcon = '✅';
             statusClass = 'drawn';
         }
 
         li.innerHTML = `
-            <span class="participant-icon ${statusClass}">${statusIcon}</span>
+            <span class="participant-icon ${statusClass}"></span>
             <span class="participant-name">${data.name}</span>
         `;
         list.appendChild(li);
@@ -1371,7 +1365,7 @@ function showAdminDashboard() {
 
     hideAllSections();
     document.getElementById('adminDashboardSection').style.display = 'block';
-    document.getElementById('roleIndicator').innerHTML = '👑 مدير';
+    document.getElementById('roleIndicator').innerHTML = '<span class="role-badge admin"></span> مدير';
 
     // Apply translations
     applyAdminTranslations();
