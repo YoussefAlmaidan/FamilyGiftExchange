@@ -3,8 +3,14 @@
 .firebaserc
 firebase-debug.log
 
-# Node modules (if using Firebase CLI)
+# Node modules
 node_modules/
+
+# Test files
+tests/
+jest.config.js
+package.json
+package-lock.json
 
 # OS files
 .DS_Store
@@ -21,7 +27,6 @@ desktop.ini
 *.log
 npm-debug.log*
 
-# Optional: Keep firebase-config.js in repo
-# The API key is safe to be public (see SECURITY.md)
-# If you want to be extra cautious, uncomment the line below:
-# firebase-config.js
+# Claude temporary files
+tmpclaude-*
+.claude/
