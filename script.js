@@ -383,22 +383,36 @@ async function joinSession(sessionId, userName) {
 
         const sessionData = sessionSnapshot.val();
 
-        // Check if registration is closed
+        // Check for existing participant with same name (session recovery)
+        const participants = sessionData.participants || {};
+        const existingParticipant = Object.entries(participants)
+            .find(([id, data]) => data.name === userName);
+
+        if (existingParticipant) {
+            // RECOVERY: Restore existing participant session
+            const [participantId, participantData] = existingParticipant;
+
+            localStorage.setItem('currentSession', sessionId);
+            localStorage.setItem('currentRole', 'participant');
+            localStorage.setItem('currentUserName', userName);
+            localStorage.setItem('participantId', participantId);
+
+            currentSession = sessionId;
+            currentRole = 'participant';
+            currentUserName = userName;
+
+            initializeParticipantView();
+            showNotification('مرحباً بعودتك!');
+            return;
+        }
+
+        // Check if registration is closed (only for new participants)
         if (sessionData.registrationClosed) {
             showNotification('التسجيل مغلق. لا يمكن الانضمام حالياً');
             return;
         }
 
-        // Check for duplicate names
-        const participants = sessionData.participants || {};
-        const existingNames = Object.values(participants).map(p => p.name);
-
-        if (existingNames.includes(userName)) {
-            showNotification('هذا الاسم موجود بالفعل. الرجاء اختيار اسم آخر');
-            return;
-        }
-
-        // Add participant
+        // Add new participant
         const participantId = 'participant_' + Date.now();
         await db.ref('sessions/' + sessionId + '/participants/' + participantId).set({
             name: userName,
@@ -426,15 +440,22 @@ async function joinSession(sessionId, userName) {
 }
 
 function joinFromLanding() {
-    const userName = document.getElementById('joinName').value.trim();
+    const firstName = document.getElementById('firstName').value.trim();
+    const middleName = document.getElementById('middleName').value.trim();
     const params = getUrlParams();
+
+    if (!firstName || !middleName) {
+        showNotification('يرجى إدخال الاسم الأول واسم الأب');
+        return;
+    }
 
     if (!params.session) {
         showNotification('رابط الجلسة غير صحيح');
         return;
     }
 
-    joinSession(params.session, userName);
+    const fullName = `${firstName} ${middleName}`;
+    joinSession(params.session, fullName);
 }
 
 // ============================================
