@@ -75,6 +75,15 @@ const translations = {
         changePassword: 'تغيير كلمة المرور',
         currentPassword: 'كلمة المرور الحالية',
         changePasswordBtn: 'تغيير كلمة المرور',
+        // Countdown
+        eventDateOptional: 'تاريخ الحدث (اختياري)',
+        daysRemaining: 'أيام متبقية',
+        dayRemaining: 'يوم متبقي',
+        eventPassed: 'انتهى الموعد',
+        today: 'اليوم!',
+        editDate: 'تعديل',
+        setEventDate: 'تحديد تاريخ الحدث',
+        noDateSet: 'لم يتم تحديد تاريخ',
         // Lang toggle
         langToggle: 'English'
     },
@@ -139,6 +148,15 @@ const translations = {
         changePassword: 'Change Password',
         currentPassword: 'Current password',
         changePasswordBtn: 'Change Password',
+        // Countdown
+        eventDateOptional: 'Event Date (optional)',
+        daysRemaining: 'days remaining',
+        dayRemaining: 'day remaining',
+        eventPassed: 'Event passed',
+        today: 'Today!',
+        editDate: 'Edit',
+        setEventDate: 'Set Event Date',
+        noDateSet: 'No date set',
         // Lang toggle
         langToggle: 'العربية'
     }
@@ -155,9 +173,18 @@ function toggleAdminLanguage() {
         updateRestrictionsInterface();
         updateOrganizerProgress();
         loadIndividualAssignments();
-        // Re-apply registration UI
-        db.ref('sessions/' + currentSession + '/registrationClosed').once('value').then(snapshot => {
-            updateRegistrationUI(snapshot.val() || false);
+        // Re-apply registration UI and countdown
+        db.ref('sessions/' + currentSession).once('value').then(snapshot => {
+            const sessionData = snapshot.val();
+            if (sessionData) {
+                updateRegistrationUI(sessionData.registrationClosed || false);
+                updateCountdownDisplay(
+                    sessionData.eventDate,
+                    'countdownDisplay',
+                    'countdownDays',
+                    'countdownLabel'
+                );
+            }
         });
     }
 
@@ -216,6 +243,91 @@ function t(key, replacements = {}) {
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
+
+// Countdown Timer Functions
+function calculateDaysRemaining(eventDate) {
+    if (!eventDate) return null;
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Reset to start of day
+    const event = new Date(eventDate);
+    event.setHours(0, 0, 0, 0);
+    const diffTime = event - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+}
+
+function updateCountdownDisplay(eventDate, displayId, daysId, labelId) {
+    const display = document.getElementById(displayId);
+    const setDateBtn = document.getElementById('setDateBtn');
+
+    if (!eventDate || !display) {
+        if (display) display.style.display = 'none';
+        // Show "Set Date" button if no date and we're in organizer view
+        if (setDateBtn && displayId === 'countdownDisplay') {
+            setDateBtn.style.display = 'inline-block';
+        }
+        return;
+    }
+
+    // Hide "Set Date" button since we have a date
+    if (setDateBtn && displayId === 'countdownDisplay') {
+        setDateBtn.style.display = 'none';
+    }
+
+    const days = calculateDaysRemaining(eventDate);
+    const daysElement = document.getElementById(daysId);
+    const labelElement = document.getElementById(labelId);
+
+    if (!daysElement || !labelElement) return;
+
+    if (days < 0) {
+        daysElement.textContent = '0';
+        labelElement.textContent = adminLanguage === 'en' ? 'Event passed' : 'انتهى الموعد';
+    } else if (days === 0) {
+        daysElement.textContent = adminLanguage === 'en' ? 'Today!' : 'اليوم!';
+        daysElement.style.fontSize = '2rem';
+        labelElement.textContent = '';
+    } else if (days === 1) {
+        daysElement.textContent = '1';
+        labelElement.textContent = adminLanguage === 'en' ? 'day remaining' : 'يوم متبقي';
+    } else {
+        daysElement.textContent = days;
+        daysElement.style.fontSize = '';
+        labelElement.textContent = adminLanguage === 'en' ? 'days remaining' : 'أيام متبقية';
+    }
+    display.style.display = 'flex';
+}
+
+function updateParticipantCountdown(eventDate) {
+    const display = document.getElementById('participantCountdown');
+    if (!eventDate || !display) {
+        if (display) display.style.display = 'none';
+        return;
+    }
+
+    const days = calculateDaysRemaining(eventDate);
+    const daysElement = document.getElementById('participantCountdownDays');
+    const labelElement = document.getElementById('participantCountdownLabel');
+
+    if (!daysElement || !labelElement) return;
+
+    if (days < 0) {
+        daysElement.textContent = '0';
+        labelElement.textContent = 'انتهى الموعد';
+    } else if (days === 0) {
+        daysElement.textContent = 'اليوم!';
+        daysElement.style.fontSize = '2rem';
+        labelElement.textContent = '';
+    } else if (days === 1) {
+        daysElement.textContent = '1';
+        labelElement.textContent = 'يوم متبقي';
+    } else {
+        daysElement.textContent = days;
+        daysElement.style.fontSize = '';
+        labelElement.textContent = 'أيام متبقية';
+    }
+    display.style.display = 'flex';
+}
 
 function showNotification(message) {
     const notification = document.createElement('div');
@@ -319,6 +431,7 @@ function backToLanding() {
 async function createSession() {
     const sessionName = document.getElementById('sessionName').value.trim();
     const organizerName = document.getElementById('organizerName').value.trim();
+    const eventDate = document.getElementById('eventDate').value; // Optional
 
     if (!sessionName || !organizerName) {
         showNotification('الرجاء ملء جميع الحقول');
@@ -328,17 +441,24 @@ async function createSession() {
     const sessionId = generateSessionId();
     const adminKey = generateAdminKey();
 
+    const sessionData = {
+        name: sessionName,
+        status: 'setup',
+        createdBy: organizerName,
+        createdAt: Date.now(),
+        adminKey: adminKey,
+        participants: {},
+        assignments: {},
+        restrictions: {}
+    };
+
+    // Only add eventDate if provided
+    if (eventDate) {
+        sessionData.eventDate = eventDate;
+    }
+
     try {
-        await db.ref('sessions/' + sessionId).set({
-            name: sessionName,
-            status: 'setup',
-            createdBy: organizerName,
-            createdAt: Date.now(),
-            adminKey: adminKey,
-            participants: {},
-            assignments: {},
-            restrictions: {}
-        });
+        await db.ref('sessions/' + sessionId).set(sessionData);
 
         // Save to localStorage
         localStorage.setItem('currentSession', sessionId);
@@ -493,6 +613,14 @@ async function loadOrganizerData() {
 
         // Update registration status UI
         updateRegistrationUI(sessionData.registrationClosed || false);
+
+        // Update countdown display
+        updateCountdownDisplay(
+            sessionData.eventDate,
+            'countdownDisplay',
+            'countdownDays',
+            'countdownLabel'
+        );
 
         // Show view results section if draw has started
         if (sessionData.status === 'drawing' || sessionData.status === 'completed') {
@@ -787,6 +915,53 @@ async function resetSession() {
     }
 }
 
+async function editEventDate() {
+    // Create a simple date picker dialog
+    const currentDate = await db.ref('sessions/' + currentSession + '/eventDate').once('value');
+    const existingDate = currentDate.val() || '';
+
+    const promptText = adminLanguage === 'en'
+        ? 'Enter event date (YYYY-MM-DD):'
+        : 'أدخل تاريخ الحدث (YYYY-MM-DD):';
+
+    const newDate = prompt(promptText, existingDate);
+
+    if (newDate === null) return; // Cancelled
+
+    // Validate date format if not empty
+    if (newDate && !/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+        showNotification(adminLanguage === 'en'
+            ? 'Invalid date format. Use YYYY-MM-DD'
+            : 'صيغة التاريخ غير صحيحة. استخدم YYYY-MM-DD');
+        return;
+    }
+
+    try {
+        if (newDate) {
+            await db.ref('sessions/' + currentSession + '/eventDate').set(newDate);
+        } else {
+            await db.ref('sessions/' + currentSession + '/eventDate').remove();
+        }
+
+        // Update the countdown display
+        updateCountdownDisplay(
+            newDate || null,
+            'countdownDisplay',
+            'countdownDays',
+            'countdownLabel'
+        );
+
+        showNotification(adminLanguage === 'en'
+            ? 'Event date updated'
+            : 'تم تحديث تاريخ الحدث');
+    } catch (error) {
+        console.error('Error updating event date:', error);
+        showNotification(adminLanguage === 'en'
+            ? 'Error updating date'
+            : 'خطأ في تحديث التاريخ');
+    }
+}
+
 // ============================================
 // PARTICIPANT VIEW
 // ============================================
@@ -810,6 +985,9 @@ function listenToSessionStatus() {
         const participantData = sessionData.participants[participantId];
 
         if (!participantData) return;
+
+        // Update countdown display for participant
+        updateParticipantCountdown(sessionData.eventDate);
 
         // Update UI based on state
         updateParticipantState(sessionData.status, participantData);

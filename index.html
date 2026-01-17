@@ -115,6 +115,10 @@
                 <div class="input-group">
                     <input type="text" id="organizerName" data-i18n-placeholder="yourName" placeholder="اسمك" class="vintage-input">
                 </div>
+                <div class="input-group">
+                    <label data-i18n="eventDateOptional">تاريخ الحدث (اختياري)</label>
+                    <input type="date" id="eventDate" class="vintage-input">
+                </div>
                 <div class="action-buttons">
                     <button onclick="createSession()" class="vintage-button primary" data-i18n="create">
                         إنشاء
@@ -140,6 +144,16 @@
                 <!-- Session Info -->
                 <div class="session-info">
                     <h3 id="sessionTitle"></h3>
+                    <!-- Countdown Display -->
+                    <div class="countdown-display" id="countdownDisplay" style="display: none;">
+                        <div class="countdown-content">
+                            <span class="countdown-number" id="countdownDays">0</span>
+                            <span class="countdown-label" id="countdownLabel" data-i18n="daysRemaining">أيام متبقية</span>
+                        </div>
+                        <button onclick="editEventDate()" class="vintage-button small" id="editDateBtn" data-i18n="editDate">تعديل</button>
+                    </div>
+                    <!-- Set Date Button (shown when no date set) -->
+                    <button onclick="editEventDate()" class="vintage-button small set-date-btn" id="setDateBtn" style="display: none;" data-i18n="setEventDate">تحديد تاريخ الحدث</button>
                     <div class="session-link-box">
                         <label data-i18n="shareLink">رابط المشاركة:</label>
                         <div class="link-display">
@@ -232,6 +246,14 @@
             <section class="participant-section" id="participantSection" style="display: none;">
                 <div class="participant-name-display">
                     <span id="participantNameLabel"></span>
+                </div>
+
+                <!-- Countdown Display for Participant -->
+                <div class="countdown-display participant-countdown" id="participantCountdown" style="display: none;">
+                    <div class="countdown-content">
+                        <span class="countdown-number" id="participantCountdownDays">0</span>
+                        <span class="countdown-label" id="participantCountdownLabel">أيام متبقية</span>
+                    </div>
                 </div>
 
                 <!-- Waiting State -->
