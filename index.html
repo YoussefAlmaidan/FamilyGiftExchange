@@ -17,13 +17,19 @@
             <!-- Landing Page (No Session) - Participant Only -->
             <section class="landing-section" id="landingSection">
                 <h2>مرحباً</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 2rem;">أدخل اسمك للانضمام إلى السحب</p>
-                <div style="max-width: 500px; margin: 0 auto;">
+                <p class="landing-subtitle">أدخل اسمك للانضمام إلى السحب</p>
+                <div class="landing-form">
                     <div class="name-inputs">
-                        <input type="text" id="firstName" placeholder="يوسف" class="vintage-input">
-                        <input type="text" id="middleName" placeholder="حسين" class="vintage-input">
+                        <div class="input-wrapper">
+                            <label for="firstName">الاسم الأول</label>
+                            <input type="text" id="firstName" placeholder="مثال: يوسف" class="vintage-input">
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="middleName">اسم الأب</label>
+                            <input type="text" id="middleName" placeholder="مثال: حسين" class="vintage-input">
+                        </div>
                     </div>
-                    <button onclick="joinFromLanding()" class="vintage-button primary" style="width: 100%;">
+                    <button onclick="joinFromLanding()" class="vintage-button primary full-width">
                         انضم الآن
                     </button>
                 </div>
