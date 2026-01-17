@@ -6,6 +6,7 @@ let currentRole = null; // 'organizer' or 'participant'
 let currentUserName = null;
 let participantsData = {};
 let restrictionsData = {};
+let assignmentsData = {};
 let adminLanguage = localStorage.getItem('adminLanguage') || 'ar';
 
 // ============================================
@@ -518,6 +519,18 @@ function listenToParticipants() {
             document.getElementById('viewResultsSection').style.display = 'block';
         } else {
             document.getElementById('viewResultsSection').style.display = 'none';
+        }
+    });
+
+    // Listen to assignments for real-time sync
+    db.ref('sessions/' + currentSession + '/assignments').on('value', (snapshot) => {
+        assignmentsData = snapshot.val() || {};
+        // Only refresh individual view if visible and not showing all results
+        const viewResultsSection = document.getElementById('viewResultsSection');
+        const allAssignmentsContainer = document.getElementById('allAssignmentsContainer');
+        if (viewResultsSection.style.display !== 'none' &&
+            allAssignmentsContainer.style.display === 'none') {
+            loadIndividualAssignments();
         }
     });
 }
@@ -1034,7 +1047,10 @@ async function addParticipantManually() {
 
 // Show all assignments (with confirmation)
 function showAllAssignments() {
-    if (!confirm('هل أنت متأكد؟ سيتم عرض جميع النتائج')) {
+    const confirmMsg = adminLanguage === 'en'
+        ? 'Are you sure? All results will be displayed.'
+        : 'هل أنت متأكد؟ سيتم عرض جميع النتائج';
+    if (!confirm(confirmMsg)) {
         return;
     }
 
@@ -1042,16 +1058,28 @@ function showAllAssignments() {
 }
 
 async function displayAllAssignments() {
+    const container = document.getElementById('assignmentsList');
+    const loadingMsg = adminLanguage === 'en' ? 'Loading...' : 'جاري التحميل...';
+    container.innerHTML = `<div class="empty-message">${loadingMsg}</div>`;
+
+    // Show container immediately with loading state
+    document.getElementById('allAssignmentsContainer').style.display = 'block';
+    document.getElementById('showResultsBtn').style.display = 'none';
+    document.getElementById('individualAssignmentsContainer').style.display = 'none';
+
     try {
-        const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
-        const assignments = snapshot.val();
+        // Use global data or fetch fresh
+        const assignments = Object.keys(assignmentsData).length > 0
+            ? assignmentsData
+            : (await db.ref('sessions/' + currentSession + '/assignments').once('value')).val();
 
         if (!assignments || Object.keys(assignments).length === 0) {
-            showNotification('لا توجد نتائج بعد');
+            const noResultsMsg = adminLanguage === 'en' ? 'No results yet' : 'لا توجد نتائج بعد';
+            showNotification(noResultsMsg);
+            hideAllAssignments();
             return;
         }
 
-        const container = document.getElementById('assignmentsList');
         container.innerHTML = '';
 
         Object.entries(assignments).forEach(([giver, receiver]) => {
@@ -1064,13 +1092,11 @@ async function displayAllAssignments() {
             `;
             container.appendChild(item);
         });
-
-        document.getElementById('allAssignmentsContainer').style.display = 'block';
-        document.getElementById('showResultsBtn').style.display = 'none';
-        document.getElementById('individualAssignmentsContainer').style.display = 'none';
     } catch (error) {
         console.error('Error displaying assignments:', error);
-        showNotification('حدث خطأ في عرض النتائج');
+        const errorMsg = adminLanguage === 'en' ? 'Error loading results' : 'حدث خطأ في عرض النتائج';
+        showNotification(errorMsg);
+        hideAllAssignments();
     }
 }
 
@@ -1084,28 +1110,53 @@ function hideAllAssignments() {
 // Individual assignment reveal for admin
 async function loadIndividualAssignments() {
     try {
-        const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
-        const assignments = snapshot.val();
+        // Use global assignmentsData (updated by Firebase listener) or fetch if empty
+        if (Object.keys(assignmentsData).length === 0) {
+            const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
+            assignmentsData = snapshot.val() || {};
+        }
 
-        if (!assignments || Object.keys(assignments).length === 0) {
+        if (Object.keys(assignmentsData).length === 0) {
             return;
         }
 
         const container = document.getElementById('individualAssignmentsContainer');
+
+        // Save revealed states before clearing
+        const revealedGivers = new Set();
+        container.querySelectorAll('.individual-assignment-item.revealed').forEach(item => {
+            revealedGivers.add(item.dataset.giver);
+        });
+
         container.innerHTML = '';
 
-        Object.entries(assignments).forEach(([giver, receiver]) => {
+        Object.entries(assignmentsData).forEach(([giver, receiver], index) => {
             const item = document.createElement('div');
             item.className = 'individual-assignment-item';
-            item.id = `individual-${giver.replace(/\s+/g, '-')}`;
-            item.innerHTML = `
-                <div class="individual-giver">${giver}</div>
-                <div class="individual-hidden">
-                    <button onclick="revealIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small">
-                        ${t('reveal')}
+            item.id = `individual-assignment-${index}`;
+            item.dataset.giver = giver;
+
+            // Check if this was previously revealed
+            if (revealedGivers.has(giver)) {
+                item.classList.add('revealed');
+                item.innerHTML = `
+                    <div class="individual-giver">${giver}</div>
+                    <div class="individual-arrow">→</div>
+                    <div class="individual-receiver">${receiver}</div>
+                    <button onclick="hideIndividualAssignment(this)" class="vintage-button small secondary">
+                        ${t('hide')}
                     </button>
-                </div>
-            `;
+                `;
+            } else {
+                item.innerHTML = `
+                    <div class="individual-giver">${giver}</div>
+                    <div class="individual-hidden">
+                        <button onclick="revealIndividualAssignment(this)" class="vintage-button small">
+                            ${t('reveal')}
+                        </button>
+                    </div>
+                `;
+            }
             container.appendChild(item);
         });
     } catch (error) {
@@ -1113,43 +1164,45 @@ async function loadIndividualAssignments() {
     }
 }
 
-function revealIndividualAssignment(giver, receiver) {
+function revealIndividualAssignment(button) {
+    const item = button.closest('.individual-assignment-item');
+    const giver = item.dataset.giver;
+    const receiver = assignmentsData[giver];
+
+    if (!receiver) {
+        showNotification(adminLanguage === 'en' ? 'Assignment not found' : 'لم يتم العثور على النتيجة');
+        return;
+    }
+
     const confirmMsg = adminLanguage === 'en' ? `Reveal ${giver}'s result?` : `هل تريد كشف نتيجة ${giver}؟`;
     if (!confirm(confirmMsg)) {
         return;
     }
 
-    const itemId = `individual-${giver.replace(/\s+/g, '-')}`;
-    const item = document.getElementById(itemId);
-
-    if (item) {
-        item.innerHTML = `
-            <div class="individual-giver">${giver}</div>
-            <div class="individual-arrow">→</div>
-            <div class="individual-receiver">${receiver}</div>
-            <button onclick="hideIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small secondary">
-                ${t('hide')}
-            </button>
-        `;
-        item.classList.add('revealed');
-    }
+    item.innerHTML = `
+        <div class="individual-giver">${giver}</div>
+        <div class="individual-arrow">→</div>
+        <div class="individual-receiver">${receiver}</div>
+        <button onclick="hideIndividualAssignment(this)" class="vintage-button small secondary">
+            ${t('hide')}
+        </button>
+    `;
+    item.classList.add('revealed');
 }
 
-function hideIndividualAssignment(giver, receiver) {
-    const itemId = `individual-${giver.replace(/\s+/g, '-')}`;
-    const item = document.getElementById(itemId);
+function hideIndividualAssignment(button) {
+    const item = button.closest('.individual-assignment-item');
+    const giver = item.dataset.giver;
 
-    if (item) {
-        item.innerHTML = `
-            <div class="individual-giver">${giver}</div>
-            <div class="individual-hidden">
-                <button onclick="revealIndividualAssignment('${giver}', '${receiver}')" class="vintage-button small">
-                    ${t('reveal')}
-                </button>
-            </div>
-        `;
-        item.classList.remove('revealed');
-    }
+    item.innerHTML = `
+        <div class="individual-giver">${giver}</div>
+        <div class="individual-hidden">
+            <button onclick="revealIndividualAssignment(this)" class="vintage-button small">
+                ${t('reveal')}
+            </button>
+        </div>
+    `;
+    item.classList.remove('revealed');
 }
 
 // Delete session
