@@ -8,120 +8,100 @@
 </head>
 <body>
     <div class="container">
-        <header class="ornate-border">
+        <header>
             <h1 class="title">سحب الأسماء</h1>
             <div class="role-indicator" id="roleIndicator"></div>
         </header>
 
-        <div class="content-box ornate-border">
-            <!-- Landing Page (No Session) - Participant Only -->
+        <div class="content-box">
+            <!-- Landing Page -->
             <section class="landing-section" id="landingSection">
                 <h2>مرحباً</h2>
-                <p class="landing-subtitle">أدخل اسمك للانضمام إلى السحب</p>
-                <div class="landing-form">
+                <p class="subtitle">أدخل اسمك للانضمام إلى السحب</p>
+                <div class="form-container">
                     <div class="name-inputs">
                         <div class="input-wrapper">
                             <label for="firstName">الاسم الأول</label>
-                            <input type="text" id="firstName" placeholder="مثال: يوسف" class="vintage-input">
+                            <input type="text" id="firstName" placeholder="مثال: يوسف" class="input">
                         </div>
                         <div class="input-wrapper">
                             <label for="middleName">اسم الأب</label>
-                            <input type="text" id="middleName" placeholder="مثال: حسين" class="vintage-input">
+                            <input type="text" id="middleName" placeholder="مثال: حسين" class="input">
                         </div>
                     </div>
-                    <button onclick="joinFromLanding()" class="vintage-button primary full-width">
-                        انضم الآن
-                    </button>
+                    <button onclick="joinFromLanding()" class="btn primary full-width">انضم الآن</button>
                 </div>
             </section>
 
             <!-- Admin Login -->
             <section class="admin-login-section" id="adminLoginSection" style="display: none;">
                 <div class="lang-toggle">
-                    <button onclick="toggleAdminLanguage()" class="vintage-button small" id="langToggleBtn">English</button>
+                    <button onclick="toggleAdminLanguage()" class="btn small" id="langToggleBtn">English</button>
                 </div>
                 <h2 data-i18n="adminLogin">دخول المدير</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="enterPassword">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
-                <div style="max-width: 400px; margin: 0 auto;">
+                <p class="subtitle" data-i18n="enterPassword">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
+                <div class="form-container small">
                     <div class="input-group">
-                        <input type="password" id="adminPassword" data-i18n-placeholder="password" placeholder="كلمة المرور" class="vintage-input">
+                        <input type="password" id="adminPassword" data-i18n-placeholder="password" placeholder="كلمة المرور" class="input">
                     </div>
-                    <button onclick="adminLogin()" class="vintage-button primary" style="width: 100%;" data-i18n="login">
-                        دخول
-                    </button>
-                    <div id="adminSetupPrompt" style="display: none; margin-top: 1.5rem; padding: 1rem; background: #FEF9E7; border-radius: 8px;">
-                        <p style="margin-bottom: 1rem; color: var(--primary-color);" data-i18n="setupPassword">لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:</p>
+                    <button onclick="adminLogin()" class="btn primary full-width" data-i18n="login">دخول</button>
+                    <div id="adminSetupPrompt" class="setup-prompt" style="display: none;">
+                        <p data-i18n="setupPassword">لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:</p>
                         <div class="input-group">
-                            <input type="password" id="newAdminPassword" data-i18n-placeholder="newPassword" placeholder="كلمة المرور الجديدة" class="vintage-input">
+                            <input type="password" id="newAdminPassword" data-i18n-placeholder="newPassword" placeholder="كلمة المرور الجديدة" class="input">
                         </div>
                         <div class="input-group">
-                            <input type="password" id="confirmAdminPassword" data-i18n-placeholder="confirmPassword" placeholder="تأكيد كلمة المرور" class="vintage-input">
+                            <input type="password" id="confirmAdminPassword" data-i18n-placeholder="confirmPassword" placeholder="تأكيد كلمة المرور" class="input">
                         </div>
-                        <button onclick="setupAdminPassword()" class="vintage-button primary" style="width: 100%;" data-i18n="createPassword">
-                            إنشاء كلمة المرور
-                        </button>
+                        <button onclick="setupAdminPassword()" class="btn primary full-width" data-i18n="createPassword">إنشاء كلمة المرور</button>
                     </div>
                 </div>
             </section>
 
-            <!-- Admin Dashboard (Session List) -->
+            <!-- Admin Dashboard -->
             <section class="admin-dashboard-section" id="adminDashboardSection" style="display: none;">
-                <div class="admin-header">
+                <div class="section-header">
                     <h2 data-i18n="adminDashboard">لوحة المدير</h2>
-                    <div class="admin-header-buttons">
-                        <button onclick="toggleAdminLanguage()" class="vintage-button small" id="langToggleBtnDash">English</button>
-                        <button onclick="adminLogout()" class="vintage-button secondary small" data-i18n="logout">تسجيل خروج</button>
+                    <div class="header-buttons">
+                        <button onclick="toggleAdminLanguage()" class="btn small" id="langToggleBtnDash">English</button>
+                        <button onclick="adminLogout()" class="btn secondary small" data-i18n="logout">تسجيل خروج</button>
                     </div>
                 </div>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="manageSessions">إدارة جلسات سحب الأسماء</p>
-
-                <!-- Create New Session Button -->
-                <button onclick="showCreateSession()" class="vintage-button primary" style="width: 100%; margin-bottom: 2rem;" data-i18n="createNewSession">
-                    + إنشاء جلسة جديدة
-                </button>
-
-                <!-- Sessions List -->
+                <p class="subtitle" data-i18n="manageSessions">إدارة جلسات سحب الأسماء</p>
+                <button onclick="showCreateSession()" class="btn primary full-width mb-2" data-i18n="createNewSession">+ إنشاء جلسة جديدة</button>
                 <div class="sessions-list-container">
                     <h3 data-i18n="previousSessions">الجلسات السابقة</h3>
                     <div id="sessionsListContainer">
                         <div class="empty-message" data-i18n="loading">جاري التحميل...</div>
                     </div>
                 </div>
-
-                <!-- Change Password Section -->
-                <div class="change-password-section">
+                <div class="card mt-2">
                     <h3 data-i18n="changePassword">تغيير كلمة المرور</h3>
                     <div class="input-group">
-                        <input type="password" id="currentPassword" data-i18n-placeholder="currentPassword" placeholder="كلمة المرور الحالية" class="vintage-input">
+                        <input type="password" id="currentPassword" data-i18n-placeholder="currentPassword" placeholder="كلمة المرور الحالية" class="input">
                     </div>
                     <div class="input-group">
-                        <input type="password" id="newPasswordChange" data-i18n-placeholder="newPassword" placeholder="كلمة المرور الجديدة" class="vintage-input">
+                        <input type="password" id="newPasswordChange" data-i18n-placeholder="newPassword" placeholder="كلمة المرور الجديدة" class="input">
                     </div>
                     <div class="input-group">
-                        <input type="password" id="confirmPasswordChange" data-i18n-placeholder="confirmPassword" placeholder="تأكيد كلمة المرور الجديدة" class="vintage-input">
+                        <input type="password" id="confirmPasswordChange" data-i18n-placeholder="confirmPassword" placeholder="تأكيد كلمة المرور الجديدة" class="input">
                     </div>
-                    <button onclick="changeAdminPassword()" class="vintage-button primary" data-i18n="changePasswordBtn">
-                        تغيير كلمة المرور
-                    </button>
+                    <button onclick="changeAdminPassword()" class="btn primary" data-i18n="changePasswordBtn">تغيير كلمة المرور</button>
                 </div>
             </section>
 
-            <!-- Create Session Modal -->
+            <!-- Create Session -->
             <section class="create-session-section" id="createSessionSection" style="display: none;">
                 <h2 data-i18n="createNewSessionTitle">إنشاء جلسة جديدة</h2>
                 <div class="input-group">
-                    <input type="text" id="sessionName" data-i18n-placeholder="sessionNamePlaceholder" placeholder="اسم الجلسة (مثال: عائلة 2026)" class="vintage-input">
+                    <input type="text" id="sessionName" data-i18n-placeholder="sessionNamePlaceholder" placeholder="اسم الجلسة (مثال: عائلة 2026)" class="input">
                 </div>
                 <div class="input-group">
-                    <input type="text" id="organizerName" data-i18n-placeholder="yourName" placeholder="اسمك" class="vintage-input">
+                    <input type="text" id="organizerName" data-i18n-placeholder="yourName" placeholder="اسمك" class="input">
                 </div>
                 <div class="action-buttons">
-                    <button onclick="createSession()" class="vintage-button primary" data-i18n="create">
-                        إنشاء
-                    </button>
-                    <button onclick="backToAdminDashboard()" class="vintage-button secondary" data-i18n="cancel">
-                        إلغاء
-                    </button>
+                    <button onclick="createSession()" class="btn primary" data-i18n="create">إنشاء</button>
+                    <button onclick="backToAdminDashboard()" class="btn secondary" data-i18n="cancel">إلغاء</button>
                 </div>
             </section>
 
@@ -129,56 +109,46 @@
             <section class="organizer-section" id="organizerSection" style="display: none;">
                 <div class="section-header">
                     <h2 data-i18n="controlPanel">لوحة التحكم</h2>
-                    <div class="section-header-buttons">
-                        <button onclick="toggleAdminLanguage()" class="vintage-button small" id="langToggleBtnOrg">English</button>
-                        <button onclick="backToAdminDashboard()" class="vintage-button secondary back-btn" data-i18n="allSessions">
-                            ← كل الجلسات
-                        </button>
+                    <div class="header-buttons">
+                        <button onclick="toggleAdminLanguage()" class="btn small" id="langToggleBtnOrg">English</button>
+                        <button onclick="backToAdminDashboard()" class="btn secondary small" data-i18n="allSessions">← كل الجلسات</button>
                     </div>
                 </div>
 
-                <!-- Session Info -->
                 <div class="session-info">
                     <h3 id="sessionTitle"></h3>
                     <div class="session-link-box">
                         <label data-i18n="shareLink">رابط المشاركة:</label>
                         <div class="link-display">
                             <input type="text" id="sessionLink" readonly class="link-input">
-                            <button onclick="copySessionLink()" class="vintage-button" data-i18n="copy">نسخ</button>
+                            <button onclick="copySessionLink()" class="btn" data-i18n="copy">نسخ</button>
                         </div>
                         <div class="share-buttons">
-                            <button onclick="shareWhatsApp()" class="vintage-button">WhatsApp</button>
-                            <button onclick="shareTelegram()" class="vintage-button">Telegram</button>
+                            <button onclick="shareWhatsApp()" class="btn">WhatsApp</button>
+                            <button onclick="shareTelegram()" class="btn">Telegram</button>
                         </div>
                     </div>
-                    <!-- Registration Toggle -->
                     <div class="registration-toggle">
-                        <button onclick="toggleRegistration()" class="vintage-button" id="registrationToggleBtn" data-i18n="closeRegistration">
-                            إغلاق التسجيل
-                        </button>
+                        <button onclick="toggleRegistration()" class="btn" id="registrationToggleBtn" data-i18n="closeRegistration">إغلاق التسجيل</button>
                         <span class="registration-status" id="registrationStatus" data-i18n="registrationOpen">التسجيل مفتوح</span>
                     </div>
                 </div>
 
-                <!-- Participants List -->
                 <div class="participants-management">
                     <h3><span data-i18n="participants">المشاركون</span> (<span id="participantCount">0</span>)</h3>
-                    <!-- Add Participant Manually -->
-                    <div class="add-participant-manual">
-                        <input type="text" id="manualParticipantName" data-i18n-placeholder="addManually" placeholder="أضف مشارك يدوياً" class="vintage-input">
-                        <button onclick="addParticipantManually()" class="vintage-button" data-i18n="add">إضافة</button>
+                    <div class="add-participant">
+                        <input type="text" id="manualParticipantName" data-i18n-placeholder="addManually" placeholder="أضف مشارك يدوياً" class="input">
+                        <button onclick="addParticipantManually()" class="btn" data-i18n="add">إضافة</button>
                     </div>
                     <ul id="organizerParticipantsList" class="participants-list"></ul>
                 </div>
 
-                <!-- Restrictions Interface -->
                 <div class="restrictions-section">
                     <h3 data-i18n="restrictionsOptional">القيود (اختياري)</h3>
                     <p class="help-text" data-i18n="restrictionsHelp">حدد من لا يمكن أن يسحب بعضهم بعضاً</p>
                     <div id="restrictionsContainer"></div>
                 </div>
 
-                <!-- Draw Controls -->
                 <div class="draw-controls">
                     <div class="draw-progress">
                         <span id="organizerProgressText">0 من 0 سحبوا</span>
@@ -187,44 +157,30 @@
                         </div>
                     </div>
                     <div class="action-buttons">
-                        <button onclick="startDrawAsOrganizer()" class="vintage-button primary" id="startDrawBtn" data-i18n="startDraw">
-                            بدء السحب
-                        </button>
-                        <button onclick="resetSession()" class="vintage-button secondary" data-i18n="reset">
-                            إعادة تعيين
-                        </button>
+                        <button onclick="startDrawAsOrganizer()" class="btn primary" id="startDrawBtn" data-i18n="startDraw">بدء السحب</button>
+                        <button onclick="resetSession()" class="btn secondary" data-i18n="reset">إعادة تعيين</button>
                     </div>
                 </div>
 
-                <!-- View All Assignments (Hidden by default) -->
                 <div class="view-results-section" id="viewResultsSection" style="display: none;">
                     <h3 data-i18n="viewResults">عرض النتائج</h3>
                     <div class="results-buttons">
-                        <button onclick="showAllAssignments()" class="vintage-button" id="showResultsBtn" data-i18n="showAllResults">
-                            عرض جميع النتائج
-                        </button>
+                        <button onclick="showAllAssignments()" class="btn" id="showResultsBtn" data-i18n="showAllResults">عرض جميع النتائج</button>
                     </div>
-                    <!-- Individual Results (each hidden by default) -->
                     <div class="individual-assignments-wrapper">
                         <div class="individual-assignments" id="individualAssignmentsContainer"></div>
                     </div>
-                    <!-- All Results View -->
                     <div class="all-assignments" id="allAssignmentsContainer" style="display: none;">
                         <div class="assignments-list-wrapper">
                             <div id="assignmentsList"></div>
                         </div>
-                        <button onclick="hideAllAssignments()" class="vintage-button secondary" data-i18n="hideResults">
-                            إخفاء النتائج
-                        </button>
+                        <button onclick="hideAllAssignments()" class="btn secondary" data-i18n="hideResults">إخفاء النتائج</button>
                     </div>
                 </div>
 
-                <!-- Danger Zone -->
                 <div class="danger-zone">
                     <h3 data-i18n="dangerZone">منطقة الخطر</h3>
-                    <button onclick="deleteSession()" class="vintage-button danger" data-i18n="deleteSession">
-                        حذف الجلسة
-                    </button>
+                    <button onclick="deleteSession()" class="btn danger" data-i18n="deleteSession">حذف الجلسة</button>
                 </div>
             </section>
 
@@ -234,53 +190,38 @@
                     <span id="participantNameLabel"></span>
                 </div>
 
-                <!-- Waiting State -->
                 <div class="waiting-state" id="waitingState">
                     <div class="waiting-animation"></div>
                     <h3>جاري الانتظار...</h3>
                     <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
-
-                    <!-- Participants Browser -->
                     <div class="participants-browser">
                         <h4>المشاركون الآخرون</h4>
                         <ul id="waitingParticipantsList" class="waiting-participants-list"></ul>
                     </div>
                 </div>
 
-                <!-- Excluded State -->
                 <div class="excluded-state" id="excludedState" style="display: none;">
                     <div class="waiting-animation"></div>
                     <h3>يرجى الانتظار</h3>
                     <p>سيتم إعلامك عندما يحين دورك</p>
                 </div>
 
-                <!-- Ready to Draw -->
                 <div class="ready-state" id="readyState" style="display: none;">
                     <div class="ready-animation"></div>
                     <h3>جاهز للسحب!</h3>
-                    <button onclick="drawAsParticipant()" class="vintage-button primary large">
-                        اسحب الآن
-                    </button>
+                    <button onclick="drawAsParticipant()" class="btn primary large">اسحب الآن</button>
                 </div>
 
-                <!-- Result Display -->
                 <div class="result-state" id="resultState" style="display: none;">
                     <div class="result-display" id="participantResultDisplay"></div>
-                    <button onclick="copyResult()" class="vintage-button">
-                        نسخ النتيجة
-                    </button>
+                    <button onclick="copyResult()" class="btn">نسخ النتيجة</button>
                 </div>
             </section>
         </div>
-
-        <footer class="footer"></footer>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
-    <!-- App Scripts -->
     <script src="firebase-config.js"></script>
     <script src="script.js"></script>
 </body>
