@@ -1068,10 +1068,12 @@ async function displayAllAssignments() {
     document.getElementById('individualAssignmentsContainer').style.display = 'none';
 
     try {
-        // Use global data or fetch fresh
-        const assignments = Object.keys(assignmentsData).length > 0
-            ? assignmentsData
-            : (await db.ref('sessions/' + currentSession + '/assignments').once('value')).val();
+        // Always fetch fresh data from Firebase to ensure consistency
+        const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
+        const assignments = snapshot.val();
+
+        // Update global cache
+        assignmentsData = assignments || {};
 
         if (!assignments || Object.keys(assignments).length === 0) {
             const noResultsMsg = adminLanguage === 'en' ? 'No results yet' : 'لا توجد نتائج بعد';
@@ -1110,11 +1112,9 @@ function hideAllAssignments() {
 // Individual assignment reveal for admin
 async function loadIndividualAssignments() {
     try {
-        // Use global assignmentsData (updated by Firebase listener) or fetch if empty
-        if (Object.keys(assignmentsData).length === 0) {
-            const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
-            assignmentsData = snapshot.val() || {};
-        }
+        // Always fetch fresh data from Firebase to ensure consistency
+        const snapshot = await db.ref('sessions/' + currentSession + '/assignments').once('value');
+        assignmentsData = snapshot.val() || {};
 
         if (Object.keys(assignmentsData).length === 0) {
             return;
