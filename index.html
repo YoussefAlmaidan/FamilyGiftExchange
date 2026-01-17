@@ -244,8 +244,10 @@
 
             <!-- Participant View -->
             <section class="participant-section" id="participantSection" style="display: none;">
-                <div class="participant-name-display">
-                    <span id="participantNameLabel"></span>
+                <!-- Welcome Header -->
+                <div class="participant-welcome">
+                    <span class="welcome-label">مرحباً</span>
+                    <span class="participant-name-large" id="participantNameLabel"></span>
                 </div>
 
                 <!-- Countdown Display for Participant -->
@@ -256,41 +258,57 @@
                     </div>
                 </div>
 
-                <!-- Waiting State -->
-                <div class="waiting-state" id="waitingState">
-                    <div class="waiting-animation"></div>
-                    <h3>جاري الانتظار...</h3>
-                    <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
+                <!-- Status Card -->
+                <div class="participant-status-card">
+                    <!-- Waiting State -->
+                    <div class="waiting-state" id="waitingState">
+                        <div class="status-icon waiting-icon">
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring delay"></div>
+                        </div>
+                        <h3>جاري الانتظار...</h3>
+                        <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
+                    </div>
 
-                    <!-- Participants Browser -->
-                    <div class="participants-browser">
-                        <h4>المشاركون الآخرون</h4>
-                        <ul id="waitingParticipantsList" class="waiting-participants-list"></ul>
+                    <!-- Excluded State -->
+                    <div class="excluded-state" id="excludedState" style="display: none;">
+                        <div class="status-icon waiting-icon">
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring delay"></div>
+                        </div>
+                        <h3>يرجى الانتظار</h3>
+                        <p>سيتم إعلامك عندما يحين دورك</p>
+                    </div>
+
+                    <!-- Ready to Draw -->
+                    <div class="ready-state" id="readyState" style="display: none;">
+                        <div class="status-icon ready-icon">
+                            <span class="ready-checkmark"></span>
+                        </div>
+                        <h3>جاهز للسحب!</h3>
+                        <p class="ready-subtitle">اضغط الزر لمعرفة من ستهدي</p>
+                        <button onclick="drawAsParticipant()" class="draw-button">
+                            <span class="draw-button-text">اسحب الآن</span>
+                            <span class="draw-button-icon"></span>
+                        </button>
+                    </div>
+
+                    <!-- Result Display -->
+                    <div class="result-state" id="resultState" style="display: none;">
+                        <div class="result-card">
+                            <span class="result-label">ستهدي</span>
+                            <div class="result-name" id="participantResultDisplay"></div>
+                        </div>
+                        <button onclick="copyResult()" class="vintage-button copy-result-btn">
+                            نسخ النتيجة
+                        </button>
                     </div>
                 </div>
 
-                <!-- Excluded State -->
-                <div class="excluded-state" id="excludedState" style="display: none;">
-                    <div class="waiting-animation"></div>
-                    <h3>يرجى الانتظار</h3>
-                    <p>سيتم إعلامك عندما يحين دورك</p>
-                </div>
-
-                <!-- Ready to Draw -->
-                <div class="ready-state" id="readyState" style="display: none;">
-                    <div class="ready-animation"></div>
-                    <h3>جاهز للسحب!</h3>
-                    <button onclick="drawAsParticipant()" class="vintage-button primary large">
-                        اسحب الآن
-                    </button>
-                </div>
-
-                <!-- Result Display -->
-                <div class="result-state" id="resultState" style="display: none;">
-                    <div class="result-display" id="participantResultDisplay"></div>
-                    <button onclick="copyResult()" class="vintage-button">
-                        نسخ النتيجة
-                    </button>
+                <!-- Participants Browser -->
+                <div class="participants-browser" id="participantsBrowser">
+                    <h4>المشاركون الآخرون</h4>
+                    <ul id="waitingParticipantsList" class="waiting-participants-list"></ul>
                 </div>
             </section>
         </div>

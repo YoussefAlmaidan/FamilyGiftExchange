@@ -664,111 +664,236 @@ h3 {
 }
 
 /* Participant View */
-.participant-name-display {
+/* Participant Welcome Header */
+.participant-welcome {
     text-align: center;
-    padding: 1.25rem;
+    padding: 2rem 1.5rem;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    font-size: 1.3rem;
-    font-weight: 600;
-    box-shadow: var(--shadow);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 25px rgba(46, 58, 129, 0.25);
+}
+
+.welcome-label {
+    display: block;
+    font-size: 1rem;
+    opacity: 0.85;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.participant-name-large {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Status Card Container */
+.participant-status-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(46, 58, 129, 0.12);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
 }
 
 .waiting-state,
 .excluded-state,
 .ready-state {
     text-align: center;
-    padding: 3.5rem 2rem;
+    padding: 3rem 2rem;
 }
 
-.waiting-animation,
-.ready-animation {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 1.5rem;
+/* Status Icons */
+.status-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 2rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
-.waiting-animation {
+.waiting-icon {
     background: linear-gradient(135deg, var(--light-blue) 0%, var(--secondary-color) 100%);
-    animation: pulse 2s ease-in-out infinite;
 }
 
-.ready-animation {
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--light-blue) 100%);
-    animation: pulse 1.5s ease-in-out infinite;
+.ready-icon {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #7AEDC9 100%);
+    animation: readyPulse 2s ease-in-out infinite;
 }
 
-.waiting-animation::before,
-.ready-animation::before {
-    content: '';
-    width: 20px;
-    height: 20px;
-    background: white;
+/* Pulse Rings Animation */
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
+    border: 3px solid var(--secondary-color);
+    animation: pulseRing 2s ease-out infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); box-shadow: var(--shadow); }
-    50% { transform: scale(1.1); box-shadow: var(--glow); }
+.pulse-ring.delay {
+    animation-delay: 1s;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
+
+@keyframes readyPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(14, 251, 182, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px 10px rgba(14, 251, 182, 0.2);
+    }
+}
+
+/* Ready Checkmark */
+.ready-checkmark {
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+.ready-checkmark::before,
+.ready-checkmark::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 3px;
+}
+
+.ready-checkmark::before {
+    width: 8px;
+    height: 20px;
+    bottom: 8px;
+    left: 8px;
+    transform: rotate(-45deg);
+}
+
+.ready-checkmark::after {
+    width: 8px;
+    height: 35px;
+    bottom: 5px;
+    right: 8px;
+    transform: rotate(35deg);
 }
 
 .waiting-state h3,
 .excluded-state h3,
 .ready-state h3 {
     color: var(--primary-color);
-    font-size: 1.6rem;
-    margin-bottom: 0.85rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
 }
 
 .waiting-state p,
 .excluded-state p {
     color: var(--text-secondary);
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+    margin: 0;
 }
 
-/* Result Display */
-.result-display {
-    text-align: center;
-    padding: 3.5rem 2rem;
-}
-
-.your-name {
-    font-size: 1.6rem;
+.ready-subtitle {
     color: var(--text-secondary);
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    margin-bottom: 2rem;
 }
 
-.arrow {
-    font-size: 2rem;
-    color: var(--accent-color);
-    margin: 1.25rem 0;
-    font-weight: bold;
-}
-
-.assigned-name {
-    font-size: 2.75rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-top: 1rem;
-    text-shadow: 0 2px 4px rgba(46, 58, 129, 0.2);
-}
-
-.result-state {
-    text-align: center;
-    padding: 2.5rem;
-}
-
-.result-actions {
-    display: flex;
+/* Draw Button */
+.draw-button {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    margin-top: 2rem;
+    padding: 1.25rem 3rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #3a4a9a 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(46, 58, 129, 0.3);
+    font-family: inherit;
+}
+
+.draw-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(46, 58, 129, 0.4);
+}
+
+.draw-button:active {
+    transform: translateY(-1px);
+}
+
+.draw-button-icon {
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: relative;
+}
+
+.draw-button-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-30%, -50%);
+    border: 6px solid transparent;
+    border-left: 10px solid white;
+}
+
+/* Result State */
+.result-state {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.result-card {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #7AEDC9 100%);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 40px rgba(14, 251, 182, 0.25);
+}
+
+.result-label {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    opacity: 0.8;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.result-name {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1.2;
+}
+
+.copy-result-btn {
+    margin-top: 0;
 }
 
 /* Empty State */
@@ -1109,78 +1234,97 @@ h3 {
 
 /* Participants Browser (Waiting State) */
 .participants-browser {
-    margin-top: 2.5rem;
-    padding: 1.75rem;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    backdrop-filter: blur(5px);
+    margin-top: 0;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(46, 58, 129, 0.08);
 }
 
 .participants-browser h4 {
-    margin: 0 0 1.25rem 0;
+    margin: 0 0 1rem 0;
     color: var(--primary-color);
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.participants-browser h4::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--accent-color);
+    border-radius: 50%;
 }
 
 .waiting-participants-list {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 220px;
+    max-height: 200px;
     overflow-y: auto;
+    display: grid;
+    gap: 0.5rem;
 }
 
 .waiting-participant-item {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
-    padding: 0.85rem;
-    background: var(--card-color);
-    border: 1px solid var(--border-color);
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: none;
     border-radius: 10px;
-    margin-bottom: 0.55rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .waiting-participant-item:hover {
-    border-color: var(--light-blue);
-    box-shadow: var(--shadow);
-}
-
-.waiting-participant-item:last-child {
-    margin-bottom: 0;
+    background: linear-gradient(135deg, #e8f4fd 0%, #dbeafe 100%);
+    transform: translateX(-4px);
 }
 
 .waiting-participant-item .participant-icon {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: var(--light-blue);
+    background: linear-gradient(135deg, var(--light-blue) 0%, var(--secondary-color) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+}
+
+.waiting-participant-item .participant-icon::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
 }
 
 .waiting-participant-item .participant-icon.drawn {
-    background: var(--accent-color);
+    background: linear-gradient(135deg, var(--accent-color) 0%, #7AEDC9 100%);
 }
 
 .waiting-participant-item .participant-icon.excluded {
     background: var(--border-color);
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 .waiting-participant-item .participant-name {
     font-weight: 500;
     color: var(--primary-color);
+    font-size: 0.95rem;
 }
 
 .waiting-participants-list .empty-item {
     color: var(--text-secondary);
     font-style: italic;
     text-align: center;
-    padding: 1.25rem;
+    padding: 1.5rem;
+    background: none;
 }
 
 /* Individual Assignments (Admin) */
