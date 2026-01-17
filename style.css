@@ -821,45 +821,63 @@ h3 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    padding: 1.25rem 3rem;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #3a4a9a 100%);
-    color: white;
+    gap: 1rem;
+    padding: 1.5rem 3.5rem;
+    background: linear-gradient(135deg, var(--accent-color) 0%, #7AEDC9 100%);
+    color: var(--primary-color);
     border: none;
-    border-radius: 50px;
-    font-size: 1.3rem;
-    font-weight: 700;
+    border-radius: 16px;
+    font-size: 1.5rem;
+    font-weight: 800;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 8px 25px rgba(46, 58, 129, 0.3);
+    box-shadow: 0 10px 30px rgba(14, 251, 182, 0.4);
     font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.draw-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.draw-button:hover::before {
+    left: 100%;
 }
 
 .draw-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 35px rgba(46, 58, 129, 0.4);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(14, 251, 182, 0.5);
 }
 
 .draw-button:active {
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.01);
 }
 
 .draw-button-icon {
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.3);
+    width: 28px;
+    height: 28px;
+    background: var(--primary-color);
     border-radius: 50%;
     position: relative;
+    flex-shrink: 0;
 }
 
 .draw-button-icon::before {
     content: '';
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-30%, -50%);
-    border: 6px solid transparent;
-    border-left: 10px solid white;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    border: 7px solid transparent;
+    border-left: 12px solid white;
 }
 
 /* Result State */
@@ -871,22 +889,13 @@ h3 {
 .result-card {
     background: linear-gradient(135deg, var(--accent-color) 0%, #7AEDC9 100%);
     border-radius: 20px;
-    padding: 2.5rem 2rem;
+    padding: 3rem 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 10px 40px rgba(14, 251, 182, 0.25);
 }
 
-.result-label {
-    display: block;
-    font-size: 1.1rem;
-    color: var(--primary-color);
-    opacity: 0.8;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
-}
-
 .result-name {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
     color: var(--primary-color);
     line-height: 1.2;
