@@ -143,80 +143,80 @@ h3 {
 
 /* Buttons */
 .vintage-button {
-    padding: 0.85rem 1.75rem;
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     font-family: inherit;
-    background: var(--secondary-color);
-    color: white;
-    position: relative;
-    overflow: hidden;
-}
-
-.vintage-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.vintage-button:hover::before {
-    left: 100%;
+    background-color: var(--secondary-color);
+    color: #FFFFFF;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.4;
 }
 
 .vintage-button:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
+    background-color: #5a6ba5;
+    box-shadow: 0 4px 12px rgba(46, 58, 129, 0.25);
 }
 
 .vintage-button:active {
-    transform: translateY(-1px);
+    transform: scale(0.98);
 }
 
 .vintage-button.primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background-color: var(--primary-color);
 }
 
 .vintage-button.primary:hover {
-    background: linear-gradient(135deg, #3a4a9a 0%, #7a8bc5 100%);
+    background-color: #3a4a9a;
 }
 
 .vintage-button.secondary {
-    background: transparent;
+    background-color: transparent;
     border: 2px solid var(--border-color);
     color: var(--primary-color);
 }
 
 .vintage-button.secondary:hover {
-    border-color: var(--accent-color);
-    color: var(--primary-color);
-    background: rgba(14, 251, 182, 0.1);
+    border-color: var(--primary-color);
+    background-color: rgba(46, 58, 129, 0.05);
 }
 
 .vintage-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.vintage-button:disabled:hover {
+    background-color: var(--secondary-color);
+    box-shadow: none;
     transform: none;
 }
 
+.vintage-button.primary:disabled:hover {
+    background-color: var(--primary-color);
+}
+
+.vintage-button.secondary:disabled:hover {
+    background-color: transparent;
+    border-color: var(--border-color);
+}
+
 .vintage-button.large {
-    font-size: 1.3rem;
-    padding: 1.5rem 3rem;
-    border-radius: 16px;
+    font-size: 1.2rem;
+    padding: 1.25rem 2.5rem;
+    border-radius: 10px;
 }
 
 .vintage-button.small {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 /* Inputs */
@@ -774,19 +774,20 @@ h3 {
     position: relative;
     pointer-events: none;
     opacity: 0.7;
+    padding-right: 2.5rem;
 }
 
 .vintage-button.loading::after {
     content: "";
     position: absolute;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     top: 50%;
-    right: 12px;
-    margin-top: -9px;
-    border: 2px solid white;
+    right: 0.75rem;
+    margin-top: -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    border-top-color: transparent;
+    border-top-color: white;
     animation: spin 0.6s linear infinite;
 }
 
@@ -926,12 +927,16 @@ h3 {
 }
 
 .vintage-button.danger {
-    background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
-    color: white;
+    background-color: var(--warning-color);
+    color: #FFFFFF;
 }
 
 .vintage-button.danger:hover {
-    background: linear-gradient(135deg, #C0392B 0%, #922B21 100%);
+    background-color: #C0392B;
+}
+
+.vintage-button.danger:disabled:hover {
+    background-color: var(--warning-color);
 }
 
 /* Admin Dashboard */
