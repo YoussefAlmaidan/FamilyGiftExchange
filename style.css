@@ -861,25 +861,6 @@ h3 {
     transform: translateY(-2px) scale(1.01);
 }
 
-.draw-button-icon {
-    width: 28px;
-    height: 28px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    position: relative;
-    flex-shrink: 0;
-}
-
-.draw-button-icon::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 55%;
-    transform: translate(-50%, -50%);
-    border: 7px solid transparent;
-    border-left: 12px solid white;
-}
-
 /* Result State */
 .result-state {
     text-align: center;
