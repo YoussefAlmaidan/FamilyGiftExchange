@@ -10,157 +10,31 @@ let assignmentsData = {};
 let adminLanguage = localStorage.getItem('adminLanguage') || 'ar';
 
 // ============================================
-// TRANSLATIONS (Admin Panel Only)
+// TRANSLATIONS - Loaded from texts.json
 // ============================================
 
-const translations = {
-    ar: {
-        // Login
-        adminLogin: 'دخول المدير',
-        enterPassword: 'أدخل كلمة المرور للوصول إلى لوحة التحكم',
-        password: 'كلمة المرور',
-        login: 'دخول',
-        setupPassword: 'لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:',
-        newPassword: 'كلمة المرور الجديدة',
-        confirmPassword: 'تأكيد كلمة المرور',
-        createPassword: 'إنشاء كلمة المرور',
-        // Dashboard
-        adminDashboard: 'لوحة المدير',
-        logout: 'تسجيل خروج',
-        manageSessions: 'إدارة جلسات سحب الأسماء',
-        createNewSession: '+ إنشاء جلسة جديدة',
-        previousSessions: 'الجلسات السابقة',
-        loading: 'جاري التحميل...',
-        noSessions: 'لا توجد جلسات سابقة. أنشئ جلسة جديدة للبدء.',
-        open: 'فتح',
-        delete: 'حذف',
-        participant: 'مشارك',
-        setup: 'في الإعداد',
-        drawing: 'جاري السحب',
-        completed: 'مكتمل',
-        // Create Session
-        createNewSessionTitle: 'إنشاء جلسة جديدة',
-        sessionNamePlaceholder: 'اسم الجلسة (مثال: عائلة 2026)',
-        yourName: 'اسمك',
-        create: 'إنشاء',
-        cancel: 'إلغاء',
-        // Organizer View
-        controlPanel: 'لوحة التحكم',
-        allSessions: '← كل الجلسات',
-        shareLink: 'رابط المشاركة:',
-        copy: 'نسخ',
-        closeRegistration: 'إغلاق التسجيل',
-        openRegistration: 'فتح التسجيل',
-        registrationOpen: 'التسجيل مفتوح',
-        registrationClosed: 'التسجيل مغلق',
-        participants: 'المشاركون',
-        addManually: 'أضف مشارك يدوياً',
-        add: 'إضافة',
-        restrictionsOptional: 'القيود (اختياري)',
-        restrictionsHelp: 'حدد من لا يمكن أن يسحب بعضهم بعضاً',
-        startDraw: 'بدء السحب',
-        reset: 'إعادة تعيين',
-        viewResults: 'عرض النتائج',
-        showAllResults: 'عرض جميع النتائج',
-        hideResults: 'إخفاء النتائج',
-        reveal: 'كشف',
-        hide: 'إخفاء',
-        dangerZone: 'منطقة الخطر',
-        deleteSession: 'حذف الجلسة',
-        drewCount: '{drawn} من {total} سحبوا',
-        cannotDraw: '{name} لا يمكنه سحب:',
-        include: 'تضمين',
-        exclude: 'استبعاد',
-        // Change Password
-        changePassword: 'تغيير كلمة المرور',
-        currentPassword: 'كلمة المرور الحالية',
-        changePasswordBtn: 'تغيير كلمة المرور',
-        // Countdown
-        eventDateOptional: 'تاريخ الحدث (اختياري)',
-        daysRemaining: 'أيام متبقية',
-        dayRemaining: 'يوم متبقي',
-        eventPassed: 'انتهى الموعد',
-        today: 'اليوم!',
-        editDate: 'تعديل',
-        setEventDate: 'تحديد تاريخ الحدث',
-        noDateSet: 'لم يتم تحديد تاريخ',
-        // Lang toggle
-        langToggle: 'English'
-    },
-    en: {
-        // Login
-        adminLogin: 'Admin Login',
-        enterPassword: 'Enter password to access control panel',
-        password: 'Password',
-        login: 'Login',
-        setupPassword: 'No password set. Create a new password:',
-        newPassword: 'New password',
-        confirmPassword: 'Confirm password',
-        createPassword: 'Create Password',
-        // Dashboard
-        adminDashboard: 'Admin Dashboard',
-        logout: 'Logout',
-        manageSessions: 'Manage gift exchange sessions',
-        createNewSession: '+ Create New Session',
-        previousSessions: 'Previous Sessions',
-        loading: 'Loading...',
-        noSessions: 'No previous sessions. Create a new one to start.',
-        open: 'Open',
-        delete: 'Delete',
-        participant: 'participant',
-        setup: 'Setup',
-        drawing: 'Drawing',
-        completed: 'Completed',
-        // Create Session
-        createNewSessionTitle: 'Create New Session',
-        sessionNamePlaceholder: 'Session name (e.g., Family 2026)',
-        yourName: 'Your name',
-        create: 'Create',
-        cancel: 'Cancel',
-        // Organizer View
-        controlPanel: 'Control Panel',
-        allSessions: '← All Sessions',
-        shareLink: 'Share link:',
-        copy: 'Copy',
-        closeRegistration: 'Close Registration',
-        openRegistration: 'Open Registration',
-        registrationOpen: 'Registration open',
-        registrationClosed: 'Registration closed',
-        participants: 'Participants',
-        addManually: 'Add participant manually',
-        add: 'Add',
-        restrictionsOptional: 'Restrictions (optional)',
-        restrictionsHelp: 'Set who cannot draw each other',
-        startDraw: 'Start Draw',
-        reset: 'Reset',
-        viewResults: 'View Results',
-        showAllResults: 'Show All Results',
-        hideResults: 'Hide Results',
-        reveal: 'Reveal',
-        hide: 'Hide',
-        dangerZone: 'Danger Zone',
-        deleteSession: 'Delete Session',
-        drewCount: '{drawn} of {total} drew',
-        cannotDraw: '{name} cannot draw:',
-        include: 'Include',
-        exclude: 'Exclude',
-        // Change Password
-        changePassword: 'Change Password',
-        currentPassword: 'Current password',
-        changePasswordBtn: 'Change Password',
-        // Countdown
-        eventDateOptional: 'Event Date (optional)',
-        daysRemaining: 'days remaining',
-        dayRemaining: 'day remaining',
-        eventPassed: 'Event passed',
-        today: 'Today!',
-        editDate: 'Edit',
-        setEventDate: 'Set Event Date',
-        noDateSet: 'No date set',
-        // Lang toggle
-        langToggle: 'العربية'
+let translations = null;
+
+// Load translations from external JSON file
+async function loadTranslations() {
+    try {
+        const response = await fetch('texts.json');
+        translations = await response.json();
+        return true;
+    } catch (error) {
+        console.error('Error loading translations:', error);
+        // Fallback to empty object if load fails
+        translations = { ar: {}, en: {} };
+        return false;
     }
-};
+}
+
+// Get nested value from object using dot notation (e.g., "admin.login")
+function getNestedValue(obj, path) {
+    return path.split('.').reduce((current, key) => {
+        return current && current[key] !== undefined ? current[key] : null;
+    }, obj);
+}
 
 function toggleAdminLanguage() {
     adminLanguage = adminLanguage === 'ar' ? 'en' : 'ar';
@@ -196,28 +70,34 @@ function toggleAdminLanguage() {
 }
 
 function applyAdminTranslations() {
-    const t = translations[adminLanguage];
+    if (!translations) return;
+
+    const langData = translations[adminLanguage];
+    if (!langData) return;
 
     // Update language toggle buttons
+    const langToggleText = getNestedValue(langData, 'admin.langToggle');
     const langBtns = ['langToggleBtn', 'langToggleBtnDash', 'langToggleBtnOrg'];
     langBtns.forEach(id => {
         const btn = document.getElementById(id);
-        if (btn) btn.textContent = t.langToggle;
+        if (btn && langToggleText) btn.textContent = langToggleText;
     });
 
-    // Update all elements with data-i18n attribute
+    // Update all elements with data-i18n attribute (supports nested keys like "admin.login")
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (t[key]) {
-            el.textContent = t[key];
+        const value = getNestedValue(langData, key);
+        if (value) {
+            el.textContent = value;
         }
     });
 
-    // Update placeholders
+    // Update placeholders (supports nested keys)
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
-        if (t[key]) {
-            el.placeholder = t[key];
+        const value = getNestedValue(langData, key);
+        if (value) {
+            el.placeholder = value;
         }
     });
 
@@ -232,8 +112,13 @@ function applyAdminTranslations() {
     });
 }
 
+// Translation helper function - supports nested keys like "admin.login" and replacements like {name}
 function t(key, replacements = {}) {
-    let text = translations[adminLanguage][key] || key;
+    if (!translations) return key;
+
+    let text = getNestedValue(translations[adminLanguage], key);
+    if (!text) return key;
+
     Object.keys(replacements).forEach(k => {
         text = text.replace(`{${k}}`, replacements[k]);
     });
@@ -282,18 +167,18 @@ function updateCountdownDisplay(eventDate, displayId, daysId, labelId) {
 
     if (days < 0) {
         daysElement.textContent = '0';
-        labelElement.textContent = adminLanguage === 'en' ? 'Event passed' : 'انتهى الموعد';
+        labelElement.textContent = t('countdown.eventPassed');
     } else if (days === 0) {
-        daysElement.textContent = adminLanguage === 'en' ? 'Today!' : 'اليوم!';
+        daysElement.textContent = t('countdown.today');
         daysElement.style.fontSize = '2rem';
         labelElement.textContent = '';
     } else if (days === 1) {
         daysElement.textContent = '1';
-        labelElement.textContent = adminLanguage === 'en' ? 'day remaining' : 'يوم متبقي';
+        labelElement.textContent = t('countdown.dayRemaining');
     } else {
         daysElement.textContent = days;
         daysElement.style.fontSize = '';
-        labelElement.textContent = adminLanguage === 'en' ? 'days remaining' : 'أيام متبقية';
+        labelElement.textContent = t('countdown.daysRemaining');
     }
     display.style.display = 'flex';
 }
@@ -313,18 +198,18 @@ function updateParticipantCountdown(eventDate) {
 
     if (days < 0) {
         daysElement.textContent = '0';
-        labelElement.textContent = 'انتهى الموعد';
+        labelElement.textContent = t('countdown.eventPassed');
     } else if (days === 0) {
-        daysElement.textContent = 'اليوم!';
+        daysElement.textContent = t('countdown.today');
         daysElement.style.fontSize = '2rem';
         labelElement.textContent = '';
     } else if (days === 1) {
         daysElement.textContent = '1';
-        labelElement.textContent = 'يوم متبقي';
+        labelElement.textContent = t('countdown.dayRemaining');
     } else {
         daysElement.textContent = days;
         daysElement.style.fontSize = '';
-        labelElement.textContent = 'أيام متبقية';
+        labelElement.textContent = t('countdown.daysRemaining');
     }
     display.style.display = 'flex';
 }
@@ -434,7 +319,7 @@ async function createSession() {
     const eventDate = document.getElementById('eventDate').value; // Optional
 
     if (!sessionName || !organizerName) {
-        showNotification('الرجاء ملء جميع الحقول');
+        showNotification(t('notifications.fillAllFields'));
         return;
     }
 
@@ -481,16 +366,16 @@ async function createSession() {
         document.getElementById('organizerName').value = '';
 
         initializeOrganizerView();
-        showNotification('تم إنشاء الجلسة بنجاح!');
+        showNotification(t('notifications.sessionCreated'));
     } catch (error) {
         console.error('Error creating session:', error);
-        showNotification('حدث خطأ في إنشاء الجلسة');
+        showNotification(t('notifications.errorCreatingSession'));
     }
 }
 
 async function joinSession(sessionId, userName) {
     if (!userName) {
-        showNotification('الرجاء إدخال اسمك');
+        showNotification(t('notifications.enterName'));
         return;
     }
 
@@ -498,7 +383,7 @@ async function joinSession(sessionId, userName) {
         // Check if session exists
         const sessionSnapshot = await db.ref('sessions/' + sessionId).once('value');
         if (!sessionSnapshot.exists()) {
-            showNotification('الجلسة غير موجودة');
+            showNotification(t('notifications.sessionNotFound'));
             return;
         }
 
@@ -523,13 +408,13 @@ async function joinSession(sessionId, userName) {
             currentUserName = userName;
 
             initializeParticipantView();
-            showNotification('مرحباً بعودتك!');
+            showNotification(t('notifications.welcomeBack'));
             return;
         }
 
         // Check if registration is closed (only for new participants)
         if (sessionData.registrationClosed) {
-            showNotification('التسجيل مغلق. لا يمكن الانضمام حالياً');
+            showNotification(t('notifications.registrationClosed'));
             return;
         }
 
@@ -553,10 +438,10 @@ async function joinSession(sessionId, userName) {
         currentUserName = userName;
 
         initializeParticipantView();
-        showNotification('تم الانضمام بنجاح!');
+        showNotification(t('notifications.joinedSuccessfully'));
     } catch (error) {
         console.error('Error joining session:', error);
-        showNotification('حدث خطأ في الانضمام');
+        showNotification(t('notifications.errorJoining'));
     }
 }
 
@@ -566,12 +451,12 @@ function joinFromLanding() {
     const params = getUrlParams();
 
     if (!firstName || !middleName) {
-        showNotification('يرجى إدخال الاسم الأول واسم الأب');
+        showNotification(t('notifications.enterFirstAndMiddleName'));
         return;
     }
 
     if (!params.session) {
-        showNotification('رابط الجلسة غير صحيح');
+        showNotification(t('notifications.invalidSessionLink'));
         return;
     }
 
@@ -586,7 +471,7 @@ function joinFromLanding() {
 function initializeOrganizerView() {
     hideAllSections();
     document.getElementById('organizerSection').style.display = 'block';
-    document.getElementById('roleIndicator').innerHTML = '<span class="role-badge organizer"></span> منظم';
+    document.getElementById('roleIndicator').innerHTML = `<span class="role-badge organizer"></span> ${t('header.roleOrganizer')}`;
 
     // Apply translations for admin panel
     applyAdminTranslations();
@@ -672,10 +557,7 @@ function updateOrganizerParticipantsList() {
     count.textContent = participants.length;
 
     if (participants.length === 0) {
-        const emptyMsg = adminLanguage === 'en'
-            ? 'No participants yet. Share the link with your family!'
-            : 'لا يوجد مشاركون حتى الآن. شارك الرابط مع عائلتك!';
-        list.innerHTML = `<div class="empty-message">${emptyMsg}</div>`;
+        list.innerHTML = `<div class="empty-message">${t('organizer.noParticipantsYet')}</div>`;
         return;
     }
 
@@ -698,9 +580,9 @@ function updateOrganizerParticipantsList() {
             <div class="participant-actions">
                 <button class="toggle-exclude-btn ${data.isExcluded ? 'excluded' : ''}"
                         onclick="toggleExclusion('${id}')">
-                    ${data.isExcluded ? t('include') : t('exclude')}
+                    ${data.isExcluded ? t('organizer.include') : t('organizer.exclude')}
                 </button>
-                <button class="remove-btn" onclick="removeParticipant('${id}')">${t('delete')}</button>
+                <button class="remove-btn" onclick="removeParticipant('${id}')">${t('admin.delete')}</button>
             </div>
         `;
         list.appendChild(li);
@@ -714,10 +596,7 @@ function updateRestrictionsInterface() {
     const participants = Object.entries(participantsData);
 
     if (participants.length < 2) {
-        const helpText = adminLanguage === 'en'
-            ? 'Add participants first to set restrictions'
-            : 'أضف مشاركين أولاً لتعيين القيود';
-        container.innerHTML = `<p class="help-text">${helpText}</p>`;
+        container.innerHTML = `<p class="help-text">${t('organizer.addParticipantsFirst')}</p>`;
         return;
     }
 
@@ -744,11 +623,10 @@ function updateRestrictionsInterface() {
             `;
         }).join('');
 
-        const noOptionsText = adminLanguage === 'en' ? 'No options' : 'لا توجد خيارات';
         restrictionBox.innerHTML = `
-            <div class="restriction-header">${t('cannotDraw', { name: data.name })}</div>
+            <div class="restriction-header">${t('organizer.cannotDraw', { name: data.name })}</div>
             <div class="restriction-options" id="restrictions-${data.name}">
-                ${checkboxes || `<span class="no-options">${noOptionsText}</span>`}
+                ${checkboxes || `<span class="no-options">${t('organizer.noOptions')}</span>`}
             </div>
         `;
 
@@ -764,18 +642,18 @@ async function toggleExclusion(participantId) {
         await db.ref('sessions/' + currentSession + '/participants/' + participantId + '/isExcluded')
             .set(!participant.isExcluded);
 
-        showNotification(participant.isExcluded ? 'تم التضمين' : 'تم الاستبعاد');
+        showNotification(participant.isExcluded ? t('notifications.included') : t('notifications.excluded'));
     } catch (error) {
         console.error('Error toggling exclusion:', error);
     }
 }
 
 async function removeParticipant(participantId) {
-    if (!confirm('هل أنت متأكد من حذف هذا المشارك؟')) return;
+    if (!confirm(t('confirmations.deleteParticipant'))) return;
 
     try {
         await db.ref('sessions/' + currentSession + '/participants/' + participantId).remove();
-        showNotification('تم الحذف');
+        showNotification(t('notifications.deleted'));
     } catch (error) {
         console.error('Error removing participant:', error);
     }
@@ -798,7 +676,7 @@ function updateOrganizerProgress() {
     const drawnCount = includedParticipants.filter(p => p.hasDrawn).length;
     const total = includedParticipants.length;
 
-    document.getElementById('organizerProgressText').textContent = t('drewCount', { drawn: drawnCount, total: total });
+    document.getElementById('organizerProgressText').textContent = t('organizer.drewCount', { drawn: drawnCount, total: total });
     const percentage = total > 0 ? (drawnCount / total) * 100 : 0;
     document.getElementById('organizerProgressFill').style.width = percentage + '%';
 }
@@ -818,7 +696,7 @@ async function startDrawAsOrganizer() {
             .map(([_, data]) => data.name);
 
         if (participants.length < 3) {
-            showNotification('يجب أن يكون هناك 3 مشاركين على الأقل (غير مستبعدين)');
+            showNotification(t('notifications.needMinimum3'));
             button.classList.remove('loading');
             return;
         }
@@ -831,7 +709,7 @@ async function startDrawAsOrganizer() {
         const assignments = generateValidAssignments(participants, restrictions);
 
         if (!assignments) {
-            showNotification('لا يمكن إجراء السحب. القيود متضاربة جداً. قلل من القيود وحاول مرة أخرى.');
+            showNotification(t('notifications.cannotDraw'));
             button.classList.remove('loading');
             return;
         }
@@ -840,12 +718,12 @@ async function startDrawAsOrganizer() {
         await db.ref('sessions/' + currentSession + '/assignments').set(assignments);
         await db.ref('sessions/' + currentSession + '/status').set('drawing');
 
-        showNotification('تم بدء السحب! يمكن للمشاركين السحب الآن');
-        button.textContent = 'تم بدء السحب';
+        showNotification(t('notifications.drawStarted'));
+        button.textContent = t('organizer.drawStarted');
         button.disabled = true;
     } catch (error) {
         console.error('Error starting draw:', error);
-        showNotification('حدث خطأ في بدء السحب');
+        showNotification(t('notifications.errorStartingDraw'));
     }
 
     button.classList.remove('loading');
@@ -889,7 +767,7 @@ function generateValidAssignments(participants, restrictions) {
 }
 
 async function resetSession() {
-    if (!confirm('هل أنت متأكد من إعادة تعيين الجلسة؟ سيتم حذف جميع السحوبات.')) {
+    if (!confirm(t('confirmations.resetSession'))) {
         return;
     }
 
@@ -907,9 +785,9 @@ async function resetSession() {
         await db.ref('sessions/' + currentSession).update(updates);
 
         document.getElementById('startDrawBtn').disabled = false;
-        document.getElementById('startDrawBtn').textContent = 'بدء السحب';
+        document.getElementById('startDrawBtn').textContent = t('organizer.startDraw');
 
-        showNotification('تم إعادة التعيين بنجاح');
+        showNotification(t('notifications.resetSuccessful'));
     } catch (error) {
         console.error('Error resetting session:', error);
     }
@@ -920,19 +798,13 @@ async function editEventDate() {
     const currentDate = await db.ref('sessions/' + currentSession + '/eventDate').once('value');
     const existingDate = currentDate.val() || '';
 
-    const promptText = adminLanguage === 'en'
-        ? 'Enter event date (YYYY-MM-DD):'
-        : 'أدخل تاريخ الحدث (YYYY-MM-DD):';
-
-    const newDate = prompt(promptText, existingDate);
+    const newDate = prompt(t('countdown.enterDate'), existingDate);
 
     if (newDate === null) return; // Cancelled
 
     // Validate date format if not empty
     if (newDate && !/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
-        showNotification(adminLanguage === 'en'
-            ? 'Invalid date format. Use YYYY-MM-DD'
-            : 'صيغة التاريخ غير صحيحة. استخدم YYYY-MM-DD');
+        showNotification(t('notifications.invalidDateFormat'));
         return;
     }
 
@@ -951,14 +823,10 @@ async function editEventDate() {
             'countdownLabel'
         );
 
-        showNotification(adminLanguage === 'en'
-            ? 'Event date updated'
-            : 'تم تحديث تاريخ الحدث');
+        showNotification(t('notifications.eventDateUpdated'));
     } catch (error) {
         console.error('Error updating event date:', error);
-        showNotification(adminLanguage === 'en'
-            ? 'Error updating date'
-            : 'خطأ في تحديث التاريخ');
+        showNotification(t('notifications.errorUpdatingDate'));
     }
 }
 
@@ -969,7 +837,7 @@ async function editEventDate() {
 function initializeParticipantView() {
     hideAllSections();
     document.getElementById('participantSection').style.display = 'block';
-    document.getElementById('roleIndicator').innerHTML = '<span class="role-badge participant"></span> مشارك';
+    document.getElementById('roleIndicator').innerHTML = `<span class="role-badge participant"></span> ${t('header.roleParticipant')}`;
     document.getElementById('participantNameLabel').textContent = currentUserName;
 
     // Setup Firebase listeners
@@ -1007,7 +875,7 @@ function updateWaitingParticipantsList(participants, currentParticipantId) {
         .filter(([id, _]) => id !== currentParticipantId);
 
     if (otherParticipants.length === 0) {
-        list.innerHTML = '<li class="empty-item">لا يوجد مشاركون آخرون حتى الآن</li>';
+        list.innerHTML = `<li class="empty-item">${t('participant.noOtherParticipants')}</li>`;
         return;
     }
 
@@ -1067,7 +935,7 @@ async function drawAsParticipant() {
         const assignedName = assignmentSnapshot.val();
 
         if (!assignedName) {
-            showNotification('حدث خطأ. حاول مرة أخرى');
+            showNotification(t('notifications.errorOccurred'));
             return;
         }
 
@@ -1076,7 +944,7 @@ async function drawAsParticipant() {
 
         // Display result with animation
         const resultDisplay = document.getElementById('participantResultDisplay');
-        resultDisplay.innerHTML = '<div style="padding: 3rem; color: var(--text-light);">جاري الكشف...</div>';
+        resultDisplay.innerHTML = `<div style="padding: 3rem; color: var(--text-light);">${t('participant.revealing')}</div>`;
 
         setTimeout(() => {
             resultDisplay.innerHTML = `
@@ -1092,7 +960,7 @@ async function drawAsParticipant() {
         document.getElementById('resultState').style.display = 'block';
     } catch (error) {
         console.error('Error drawing:', error);
-        showNotification('حدث خطأ في السحب');
+        showNotification(t('notifications.errorDrawing'));
     }
 }
 
@@ -1124,7 +992,7 @@ function copyResult() {
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
-            showNotification('تم نسخ النتيجة ✓');
+            showNotification(t('notifications.resultCopied'));
         }).catch(() => {
             fallbackCopyText(text);
         });
@@ -1143,9 +1011,9 @@ function fallbackCopyText(text) {
 
     try {
         document.execCommand('copy');
-        showNotification('تم نسخ النتيجة ✓');
+        showNotification(t('notifications.resultCopied'));
     } catch (err) {
-        showNotification('تعذر نسخ النتيجة');
+        showNotification(t('notifications.copyFailed'));
     }
 
     document.body.removeChild(textarea);
@@ -1164,10 +1032,10 @@ async function toggleRegistration() {
         await db.ref('sessions/' + currentSession + '/registrationClosed').set(!isClosed);
 
         updateRegistrationUI(!isClosed);
-        showNotification(isClosed ? 'تم فتح التسجيل' : 'تم إغلاق التسجيل');
+        showNotification(isClosed ? t('notifications.registrationOpened') : t('notifications.registrationClosedMsg'));
     } catch (error) {
         console.error('Error toggling registration:', error);
-        showNotification('حدث خطأ');
+        showNotification(t('notifications.error'));
     }
 }
 
@@ -1176,14 +1044,14 @@ function updateRegistrationUI(isClosed) {
     const status = document.getElementById('registrationStatus');
 
     if (isClosed) {
-        btn.textContent = t('openRegistration');
+        btn.textContent = t('organizer.openRegistration');
         btn.classList.add('closed');
-        status.textContent = t('registrationClosed');
+        status.textContent = t('organizer.registrationClosed');
         status.classList.add('closed');
     } else {
-        btn.textContent = t('closeRegistration');
+        btn.textContent = t('organizer.closeRegistration');
         btn.classList.remove('closed');
-        status.textContent = t('registrationOpen');
+        status.textContent = t('organizer.registrationOpen');
         status.classList.remove('closed');
     }
 }
@@ -1194,14 +1062,14 @@ async function addParticipantManually() {
     const name = nameInput.value.trim();
 
     if (!name) {
-        showNotification('الرجاء إدخال اسم');
+        showNotification(t('notifications.enterNamePlease'));
         return;
     }
 
     // Check for duplicate names
     const existingNames = Object.values(participantsData).map(p => p.name);
     if (existingNames.includes(name)) {
-        showNotification('هذا الاسم موجود بالفعل');
+        showNotification(t('notifications.nameAlreadyExists'));
         return;
     }
 
@@ -1216,19 +1084,16 @@ async function addParticipantManually() {
         });
 
         nameInput.value = '';
-        showNotification('تمت إضافة ' + name);
+        showNotification(t('notifications.addedName', { name }));
     } catch (error) {
         console.error('Error adding participant:', error);
-        showNotification('حدث خطأ في الإضافة');
+        showNotification(t('notifications.errorAdding'));
     }
 }
 
 // Show all assignments (with confirmation)
 function showAllAssignments() {
-    const confirmMsg = adminLanguage === 'en'
-        ? 'Are you sure? All results will be displayed.'
-        : 'هل أنت متأكد؟ سيتم عرض جميع النتائج';
-    if (!confirm(confirmMsg)) {
+    if (!confirm(t('confirmations.showAllResults'))) {
         return;
     }
 
@@ -1237,8 +1102,7 @@ function showAllAssignments() {
 
 async function displayAllAssignments() {
     const container = document.getElementById('assignmentsList');
-    const loadingMsg = adminLanguage === 'en' ? 'Loading...' : 'جاري التحميل...';
-    container.innerHTML = `<div class="empty-message">${loadingMsg}</div>`;
+    container.innerHTML = `<div class="empty-message">${t('admin.loading')}</div>`;
 
     // Show container immediately with loading state
     document.getElementById('allAssignmentsContainer').style.display = 'block';
@@ -1254,8 +1118,7 @@ async function displayAllAssignments() {
         assignmentsData = assignments || {};
 
         if (!assignments || Object.keys(assignments).length === 0) {
-            const noResultsMsg = adminLanguage === 'en' ? 'No results yet' : 'لا توجد نتائج بعد';
-            showNotification(noResultsMsg);
+            showNotification(t('notifications.noResultsYet'));
             hideAllAssignments();
             return;
         }
@@ -1274,8 +1137,7 @@ async function displayAllAssignments() {
         });
     } catch (error) {
         console.error('Error displaying assignments:', error);
-        const errorMsg = adminLanguage === 'en' ? 'Error loading results' : 'حدث خطأ في عرض النتائج';
-        showNotification(errorMsg);
+        showNotification(t('notifications.errorDisplayingResults'));
         hideAllAssignments();
     }
 }
@@ -1322,7 +1184,7 @@ async function loadIndividualAssignments() {
                     <div class="individual-arrow">→</div>
                     <div class="individual-receiver">${receiver}</div>
                     <button onclick="hideIndividualAssignment(this)" class="vintage-button small secondary">
-                        ${t('hide')}
+                        ${t('organizer.hide')}
                     </button>
                 `;
             } else {
@@ -1330,7 +1192,7 @@ async function loadIndividualAssignments() {
                     <div class="individual-giver">${giver}</div>
                     <div class="individual-hidden">
                         <button onclick="revealIndividualAssignment(this)" class="vintage-button small">
-                            ${t('reveal')}
+                            ${t('organizer.reveal')}
                         </button>
                     </div>
                 `;
@@ -1348,12 +1210,11 @@ function revealIndividualAssignment(button) {
     const receiver = assignmentsData[giver];
 
     if (!receiver) {
-        showNotification(adminLanguage === 'en' ? 'Assignment not found' : 'لم يتم العثور على النتيجة');
+        showNotification(t('notifications.assignmentNotFound'));
         return;
     }
 
-    const confirmMsg = adminLanguage === 'en' ? `Reveal ${giver}'s result?` : `هل تريد كشف نتيجة ${giver}؟`;
-    if (!confirm(confirmMsg)) {
+    if (!confirm(t('confirmations.revealResult', { name: giver }))) {
         return;
     }
 
@@ -1362,7 +1223,7 @@ function revealIndividualAssignment(button) {
         <div class="individual-arrow">→</div>
         <div class="individual-receiver">${receiver}</div>
         <button onclick="hideIndividualAssignment(this)" class="vintage-button small secondary">
-            ${t('hide')}
+            ${t('organizer.hide')}
         </button>
     `;
     item.classList.add('revealed');
@@ -1376,7 +1237,7 @@ function hideIndividualAssignment(button) {
         <div class="individual-giver">${giver}</div>
         <div class="individual-hidden">
             <button onclick="revealIndividualAssignment(this)" class="vintage-button small">
-                ${t('reveal')}
+                ${t('organizer.reveal')}
             </button>
         </div>
     `;
@@ -1386,14 +1247,14 @@ function hideIndividualAssignment(button) {
 // Delete session
 async function deleteSession() {
     const sessionSnapshot = await db.ref('sessions/' + currentSession + '/name').once('value');
-    const sessionName = sessionSnapshot.val() || 'هذه الجلسة';
+    const sessionName = sessionSnapshot.val() || '';
 
-    if (!confirm(`هل أنت متأكد من حذف "${sessionName}"؟\n\nسيتم حذف جميع البيانات نهائياً ولا يمكن التراجع.`)) {
+    if (!confirm(t('confirmations.deleteSession', { name: sessionName }))) {
         return;
     }
 
     // Double confirmation for safety
-    if (!confirm('تأكيد نهائي: سيتم حذف الجلسة وجميع بياناتها. متابعة؟')) {
+    if (!confirm(t('confirmations.finalConfirmDelete'))) {
         return;
     }
 
@@ -1407,7 +1268,7 @@ async function deleteSession() {
         localStorage.removeItem('currentUserName');
         localStorage.removeItem('participantId');
 
-        showNotification('تم حذف الجلسة');
+        showNotification(t('notifications.sessionDeleted'));
 
         // Redirect to landing/admin page
         setTimeout(() => {
@@ -1415,7 +1276,7 @@ async function deleteSession() {
         }, 1000);
     } catch (error) {
         console.error('Error deleting session:', error);
-        showNotification('حدث خطأ في حذف الجلسة');
+        showNotification(t('notifications.errorDeletingSession'));
     }
 }
 
@@ -1466,12 +1327,12 @@ async function setupAdminPassword() {
     const confirmPassword = document.getElementById('confirmAdminPassword').value;
 
     if (!password || password.length < 4) {
-        showNotification('كلمة المرور يجب أن تكون 4 أحرف على الأقل');
+        showNotification(t('notifications.passwordMin4'));
         return;
     }
 
     if (password !== confirmPassword) {
-        showNotification('كلمات المرور غير متطابقة');
+        showNotification(t('notifications.passwordsNotMatch'));
         return;
     }
 
@@ -1479,7 +1340,7 @@ async function setupAdminPassword() {
         const passwordHash = await hashPassword(password);
         await db.ref('admin/passwordHash').set(passwordHash);
 
-        showNotification('تم إنشاء كلمة المرور بنجاح!');
+        showNotification(t('notifications.passwordCreated'));
 
         // Auto-login after setup
         isAdminAuthenticated = true;
@@ -1487,7 +1348,7 @@ async function setupAdminPassword() {
         showAdminDashboard();
     } catch (error) {
         console.error('Error setting up password:', error);
-        showNotification('حدث خطأ في إنشاء كلمة المرور');
+        showNotification(t('notifications.errorCreatingPassword'));
     }
 }
 
@@ -1496,7 +1357,7 @@ async function adminLogin() {
     const password = document.getElementById('adminPassword').value;
 
     if (!password) {
-        showNotification('الرجاء إدخال كلمة المرور');
+        showNotification(t('notifications.enterPasswordPlease'));
         return;
     }
 
@@ -1511,11 +1372,11 @@ async function adminLogin() {
             document.getElementById('adminPassword').value = '';
             showAdminDashboard();
         } else {
-            showNotification('كلمة المرور غير صحيحة');
+            showNotification(t('notifications.incorrectPassword'));
         }
     } catch (error) {
         console.error('Error logging in:', error);
-        showNotification('حدث خطأ في تسجيل الدخول');
+        showNotification(t('notifications.errorLoggingIn'));
     }
 }
 
@@ -1524,7 +1385,7 @@ function adminLogout() {
     isAdminAuthenticated = false;
     sessionStorage.removeItem('adminAuthenticated');
     showAdminLogin();
-    showNotification('تم تسجيل الخروج');
+    showNotification(t('notifications.loggedOut'));
 }
 
 // Change admin password
@@ -1534,20 +1395,17 @@ async function changeAdminPassword() {
     const confirmPassword = document.getElementById('confirmPasswordChange').value;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-        const msg = adminLanguage === 'en' ? 'Please fill in all fields' : 'الرجاء ملء جميع الحقول';
-        showNotification(msg);
+        showNotification(t('notifications.fillAllFields'));
         return;
     }
 
     if (newPassword.length < 4) {
-        const msg = adminLanguage === 'en' ? 'Password must be at least 4 characters' : 'كلمة المرور يجب أن تكون 4 أحرف على الأقل';
-        showNotification(msg);
+        showNotification(t('notifications.passwordMin4'));
         return;
     }
 
     if (newPassword !== confirmPassword) {
-        const msg = adminLanguage === 'en' ? 'New passwords do not match' : 'كلمات المرور الجديدة غير متطابقة';
-        showNotification(msg);
+        showNotification(t('notifications.newPasswordsNotMatch'));
         return;
     }
 
@@ -1558,8 +1416,7 @@ async function changeAdminPassword() {
         const storedHash = snapshot.val();
 
         if (currentHash !== storedHash) {
-            const msg = adminLanguage === 'en' ? 'Current password is incorrect' : 'كلمة المرور الحالية غير صحيحة';
-            showNotification(msg);
+            showNotification(t('notifications.currentPasswordIncorrect'));
             return;
         }
 
@@ -1572,12 +1429,10 @@ async function changeAdminPassword() {
         document.getElementById('newPasswordChange').value = '';
         document.getElementById('confirmPasswordChange').value = '';
 
-        const msg = adminLanguage === 'en' ? 'Password changed successfully!' : 'تم تغيير كلمة المرور بنجاح!';
-        showNotification(msg);
+        showNotification(t('notifications.passwordChanged'));
     } catch (error) {
         console.error('Error changing password:', error);
-        const msg = adminLanguage === 'en' ? 'Error changing password' : 'حدث خطأ في تغيير كلمة المرور';
-        showNotification(msg);
+        showNotification(t('notifications.errorChangingPassword'));
     }
 }
 
@@ -1617,7 +1472,7 @@ function showAdminDashboard() {
 
     hideAllSections();
     document.getElementById('adminDashboardSection').style.display = 'block';
-    document.getElementById('roleIndicator').innerHTML = '<span class="role-badge admin"></span> مدير';
+    document.getElementById('roleIndicator').innerHTML = `<span class="role-badge admin"></span> ${t('header.roleAdmin')}`;
 
     // Apply translations
     applyAdminTranslations();
@@ -1631,7 +1486,7 @@ function showAdminDashboard() {
 // Load and display admin sessions from Firebase
 async function loadAdminSessions() {
     const container = document.getElementById('sessionsListContainer');
-    container.innerHTML = `<div class="empty-message">${t('loading')}</div>`;
+    container.innerHTML = `<div class="empty-message">${t('admin.loading')}</div>`;
 
     try {
         // Get admin sessions from Firebase
@@ -1641,7 +1496,7 @@ async function loadAdminSessions() {
         const sessionIds = Object.keys(adminSessions);
 
         if (sessionIds.length === 0) {
-            container.innerHTML = `<div class="empty-message">${t('noSessions')}</div>`;
+            container.innerHTML = `<div class="empty-message">${t('admin.noSessions')}</div>`;
             return;
         }
 
@@ -1675,7 +1530,7 @@ async function loadAdminSessions() {
         }
 
         if (validSessions.length === 0) {
-            container.innerHTML = `<div class="empty-message">${t('noSessions')}</div>`;
+            container.innerHTML = `<div class="empty-message">${t('admin.noSessions')}</div>`;
             return;
         }
 
@@ -1688,13 +1543,13 @@ async function loadAdminSessions() {
             const item = document.createElement('div');
             item.className = 'session-item';
 
-            let statusText = t('setup');
+            let statusText = t('admin.statusSetup');
             let statusClass = 'setup';
             if (session.status === 'drawing') {
-                statusText = t('drawing');
+                statusText = t('admin.statusDrawing');
                 statusClass = 'drawing';
             } else if (session.status === 'completed') {
-                statusText = t('completed');
+                statusText = t('admin.statusCompleted');
                 statusClass = 'completed';
             }
 
@@ -1703,15 +1558,15 @@ async function loadAdminSessions() {
                     <div class="session-item-name">${session.name}</div>
                     <div class="session-item-meta">
                         <span class="session-status-badge ${statusClass}">${statusText}</span>
-                        <span class="participant-count">${session.participantCount} ${t('participant')}</span>
+                        <span class="participant-count">${session.participantCount} ${t('admin.participant')}</span>
                     </div>
                 </div>
                 <div class="session-item-actions">
                     <button onclick="openSession('${session.id}', '${session.key}')" class="vintage-button primary">
-                        ${t('open')}
+                        ${t('admin.open')}
                     </button>
                     <button onclick="deleteSessionFromDashboard('${session.id}', '${session.name}')" class="vintage-button danger">
-                        ${t('delete')}
+                        ${t('admin.delete')}
                     </button>
                 </div>
             `;
@@ -1719,8 +1574,7 @@ async function loadAdminSessions() {
         });
     } catch (error) {
         console.error('Error loading admin sessions:', error);
-        const errorText = adminLanguage === 'en' ? 'Error loading sessions' : 'حدث خطأ في تحميل الجلسات';
-        container.innerHTML = `<div class="empty-message">${errorText}</div>`;
+        container.innerHTML = `<div class="empty-message">${t('notifications.errorLoadingSessions')}</div>`;
     }
 }
 
@@ -1747,18 +1601,18 @@ function openSession(sessionId, adminKey) {
 
 // Delete session from dashboard
 async function deleteSessionFromDashboard(sessionId, sessionName) {
-    if (!confirm(`هل أنت متأكد من حذف "${sessionName}"؟\n\nسيتم حذف جميع البيانات نهائياً.`)) {
+    if (!confirm(t('confirmations.deleteFromDashboard', { name: sessionName }))) {
         return;
     }
 
     try {
         await db.ref('sessions/' + sessionId).remove();
         removeAdminSession(sessionId);
-        showNotification('تم حذف الجلسة');
+        showNotification(t('notifications.sessionDeleted'));
         loadAdminSessions(); // Refresh the list
     } catch (error) {
         console.error('Error deleting session:', error);
-        showNotification('حدث خطأ في حذف الجلسة');
+        showNotification(t('notifications.errorDeletingSession'));
     }
 }
 
@@ -1785,7 +1639,7 @@ function copySessionLink() {
     const linkInput = document.getElementById('sessionLink');
     linkInput.select();
     document.execCommand('copy');
-    showNotification('تم نسخ الرابط!');
+    showNotification(t('notifications.linkCopied'));
 }
 
 function shareWhatsApp() {
@@ -1804,7 +1658,13 @@ function shareTelegram() {
 // INITIALIZATION
 // ============================================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Load translations first
+    await loadTranslations();
+
+    // Apply initial translations to static HTML elements
+    applyAdminTranslations();
+
     const params = getUrlParams();
     const savedSession = localStorage.getItem('currentSession');
     const savedRole = localStorage.getItem('currentRole');
@@ -1826,7 +1686,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         initializeOrganizerView();
                     });
                 } else {
-                    showNotification('رابط منظم غير صالح');
+                    showNotification(t('notifications.invalidOrganizerLink'));
                     backToLanding();
                 }
             });
