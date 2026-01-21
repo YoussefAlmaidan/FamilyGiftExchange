@@ -3,20 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سحب الأسماء السري</title>
+    <title>سحب الأسماء - ليالي رمضان</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☪</text></svg>">
 </head>
 <body>
+    <!-- Floating Lanterns Decoration -->
+    <div class="lanterns-container" aria-hidden="true">
+        <div class="lantern lantern-1"></div>
+        <div class="lantern lantern-2"></div>
+        <div class="lantern lantern-3"></div>
+    </div>
+
+    <!-- Mosque Silhouette at Bottom -->
+    <div class="mosque-silhouette" aria-hidden="true"></div>
+
     <div class="container">
         <header class="ornate-border">
+            <div class="header-decoration">
+                <span class="crescent-icon">☪</span>
+            </div>
             <h1 class="title">سحب الأسماء</h1>
+            <p class="header-subtitle">تبادل الهدايا في أجواء رمضانية</p>
             <div class="role-indicator" id="roleIndicator"></div>
         </header>
 
         <div class="content-box ornate-border">
+            <!-- Decorative Corner Elements -->
+            <div class="corner-decoration top-right" aria-hidden="true"></div>
+            <div class="corner-decoration top-left" aria-hidden="true"></div>
+            <div class="corner-decoration bottom-right" aria-hidden="true"></div>
+            <div class="corner-decoration bottom-left" aria-hidden="true"></div>
+
             <!-- Landing Page (No Session) - Participant Only -->
             <section class="landing-section" id="landingSection">
-                <h2>مرحباً</h2>
+                <div class="section-icon">
+                    <span class="icon-star">✦</span>
+                </div>
+                <h2>مرحباً بك</h2>
                 <p class="landing-subtitle">أدخل اسمك للانضمام إلى السحب</p>
                 <div class="landing-form">
                     <div class="name-inputs">
@@ -30,6 +54,7 @@
                         </div>
                     </div>
                     <button onclick="joinFromLanding()" class="vintage-button primary full-width">
+                        <span class="btn-icon">☪</span>
                         انضم الآن
                     </button>
                 </div>
@@ -40,24 +65,30 @@
                 <div class="lang-toggle">
                     <button onclick="toggleAdminLanguage()" class="vintage-button small" id="langToggleBtn">English</button>
                 </div>
+                <div class="section-icon">
+                    <span class="icon-crescent">☪</span>
+                </div>
                 <h2 data-i18n="adminLogin">دخول المدير</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="enterPassword">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
-                <div style="max-width: 400px; margin: 0 auto;">
+                <p class="section-description" data-i18n="enterPassword">أدخل كلمة المرور للوصول إلى لوحة التحكم</p>
+                <div class="form-container">
                     <div class="input-group">
                         <input type="password" id="adminPassword" data-i18n-placeholder="password" placeholder="كلمة المرور" class="vintage-input">
                     </div>
-                    <button onclick="adminLogin()" class="vintage-button primary" style="width: 100%;" data-i18n="login">
+                    <button onclick="adminLogin()" class="vintage-button primary full-width" data-i18n="login">
                         دخول
                     </button>
-                    <div id="adminSetupPrompt" style="display: none; margin-top: 1.5rem; padding: 1rem; background: #FEF9E7; border-radius: 8px;">
-                        <p style="margin-bottom: 1rem; color: var(--primary-color);" data-i18n="setupPassword">لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:</p>
+                    <div id="adminSetupPrompt" class="setup-prompt" style="display: none;">
+                        <div class="prompt-header">
+                            <span class="prompt-icon">✦</span>
+                            <p data-i18n="setupPassword">لم يتم إعداد كلمة مرور بعد. أنشئ كلمة مرور جديدة:</p>
+                        </div>
                         <div class="input-group">
                             <input type="password" id="newAdminPassword" data-i18n-placeholder="newPassword" placeholder="كلمة المرور الجديدة" class="vintage-input">
                         </div>
                         <div class="input-group">
                             <input type="password" id="confirmAdminPassword" data-i18n-placeholder="confirmPassword" placeholder="تأكيد كلمة المرور" class="vintage-input">
                         </div>
-                        <button onclick="setupAdminPassword()" class="vintage-button primary" style="width: 100%;" data-i18n="createPassword">
+                        <button onclick="setupAdminPassword()" class="vintage-button primary full-width" data-i18n="createPassword">
                             إنشاء كلمة المرور
                         </button>
                     </div>
@@ -67,22 +98,30 @@
             <!-- Admin Dashboard (Session List) -->
             <section class="admin-dashboard-section" id="adminDashboardSection" style="display: none;">
                 <div class="admin-header">
-                    <h2 data-i18n="adminDashboard">لوحة المدير</h2>
+                    <div class="header-title-group">
+                        <div class="section-icon small">
+                            <span class="icon-crescent">☪</span>
+                        </div>
+                        <h2 data-i18n="adminDashboard">لوحة المدير</h2>
+                    </div>
                     <div class="admin-header-buttons">
                         <button onclick="toggleAdminLanguage()" class="vintage-button small" id="langToggleBtnDash">English</button>
                         <button onclick="adminLogout()" class="vintage-button secondary small" data-i18n="logout">تسجيل خروج</button>
                     </div>
                 </div>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="manageSessions">إدارة جلسات سحب الأسماء</p>
+                <p class="section-description" data-i18n="manageSessions">إدارة جلسات سحب الأسماء</p>
 
                 <!-- Create New Session Button -->
-                <button onclick="showCreateSession()" class="vintage-button primary" style="width: 100%; margin-bottom: 2rem;" data-i18n="createNewSession">
-                    + إنشاء جلسة جديدة
+                <button onclick="showCreateSession()" class="vintage-button primary create-session-btn" data-i18n="createNewSession">
+                    <span class="btn-icon">✦</span>
+                    إنشاء جلسة جديدة
                 </button>
 
                 <!-- Sessions List -->
                 <div class="sessions-list-container">
-                    <h3 data-i18n="previousSessions">الجلسات السابقة</h3>
+                    <div class="section-divider">
+                        <span class="divider-text" data-i18n="previousSessions">الجلسات السابقة</span>
+                    </div>
                     <div id="sessionsListContainer">
                         <div class="empty-message" data-i18n="loading">جاري التحميل...</div>
                     </div>
@@ -90,7 +129,9 @@
 
                 <!-- Change Password Section -->
                 <div class="change-password-section">
-                    <h3 data-i18n="changePassword">تغيير كلمة المرور</h3>
+                    <div class="section-divider">
+                        <span class="divider-text" data-i18n="changePassword">تغيير كلمة المرور</span>
+                    </div>
                     <div class="input-group">
                         <input type="password" id="currentPassword" data-i18n-placeholder="currentPassword" placeholder="كلمة المرور الحالية" class="vintage-input">
                     </div>
@@ -108,31 +149,44 @@
 
             <!-- Create Session Modal -->
             <section class="create-session-section" id="createSessionSection" style="display: none;">
+                <div class="section-icon">
+                    <span class="icon-star">✦</span>
+                </div>
                 <h2 data-i18n="createNewSessionTitle">إنشاء جلسة جديدة</h2>
-                <div class="input-group">
-                    <input type="text" id="sessionName" data-i18n-placeholder="sessionNamePlaceholder" placeholder="اسم الجلسة (مثال: عائلة 2026)" class="vintage-input">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="organizerName" data-i18n-placeholder="yourName" placeholder="اسمك" class="vintage-input">
-                </div>
-                <div class="input-group">
-                    <label data-i18n="eventDateOptional">تاريخ الحدث (اختياري)</label>
-                    <input type="date" id="eventDate" class="vintage-input">
-                </div>
-                <div class="action-buttons">
-                    <button onclick="createSession()" class="vintage-button primary" data-i18n="create">
-                        إنشاء
-                    </button>
-                    <button onclick="backToAdminDashboard()" class="vintage-button secondary" data-i18n="cancel">
-                        إلغاء
-                    </button>
+                <div class="form-container">
+                    <div class="input-group">
+                        <label data-i18n="sessionNameLabel">اسم الجلسة</label>
+                        <input type="text" id="sessionName" data-i18n-placeholder="sessionNamePlaceholder" placeholder="مثال: عائلة 2026" class="vintage-input">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="yourNameLabel">اسمك</label>
+                        <input type="text" id="organizerName" data-i18n-placeholder="yourName" placeholder="اسمك" class="vintage-input">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="eventDateOptional">تاريخ الحدث (اختياري)</label>
+                        <input type="date" id="eventDate" class="vintage-input">
+                    </div>
+                    <div class="action-buttons">
+                        <button onclick="createSession()" class="vintage-button primary" data-i18n="create">
+                            <span class="btn-icon">☪</span>
+                            إنشاء
+                        </button>
+                        <button onclick="backToAdminDashboard()" class="vintage-button secondary" data-i18n="cancel">
+                            إلغاء
+                        </button>
+                    </div>
                 </div>
             </section>
 
             <!-- Organizer View -->
             <section class="organizer-section" id="organizerSection" style="display: none;">
                 <div class="section-header">
-                    <h2 data-i18n="controlPanel">لوحة التحكم</h2>
+                    <div class="header-title-group">
+                        <div class="section-icon small">
+                            <span class="icon-crescent">☪</span>
+                        </div>
+                        <h2 data-i18n="controlPanel">لوحة التحكم</h2>
+                    </div>
                     <div class="section-header-buttons">
                         <button onclick="toggleAdminLanguage()" class="vintage-button small" id="langToggleBtnOrg">English</button>
                         <button onclick="backToAdminDashboard()" class="vintage-button secondary back-btn" data-i18n="allSessions">
@@ -141,9 +195,13 @@
                     </div>
                 </div>
 
-                <!-- Session Info -->
-                <div class="session-info">
-                    <h3 id="sessionTitle"></h3>
+                <!-- Session Info Card -->
+                <div class="session-info-card">
+                    <div class="card-header">
+                        <h3 id="sessionTitle"></h3>
+                        <div class="card-decoration">✦</div>
+                    </div>
+
                     <!-- Countdown Display -->
                     <div class="countdown-display" id="countdownDisplay" style="display: none;">
                         <div class="countdown-content">
@@ -152,8 +210,11 @@
                         </div>
                         <button onclick="editEventDate()" class="vintage-button small" id="editDateBtn" data-i18n="editDate">تعديل</button>
                     </div>
+
                     <!-- Set Date Button (shown when no date set) -->
                     <button onclick="editEventDate()" class="vintage-button small set-date-btn" id="setDateBtn" style="display: none;" data-i18n="setEventDate">تحديد تاريخ الحدث</button>
+
+                    <!-- Share Link Section -->
                     <div class="session-link-box">
                         <label data-i18n="shareLink">رابط المشاركة:</label>
                         <div class="link-display">
@@ -161,10 +222,17 @@
                             <button onclick="copySessionLink()" class="vintage-button" data-i18n="copy">نسخ</button>
                         </div>
                         <div class="share-buttons">
-                            <button onclick="shareWhatsApp()" class="vintage-button">WhatsApp</button>
-                            <button onclick="shareTelegram()" class="vintage-button">Telegram</button>
+                            <button onclick="shareWhatsApp()" class="vintage-button share-btn whatsapp">
+                                <span class="share-icon">💬</span>
+                                WhatsApp
+                            </button>
+                            <button onclick="shareTelegram()" class="vintage-button share-btn telegram">
+                                <span class="share-icon">✈</span>
+                                Telegram
+                            </button>
                         </div>
                     </div>
+
                     <!-- Registration Toggle -->
                     <div class="registration-toggle">
                         <button onclick="toggleRegistration()" class="vintage-button" id="registrationToggleBtn" data-i18n="closeRegistration">
@@ -174,9 +242,13 @@
                     </div>
                 </div>
 
-                <!-- Participants List -->
-                <div class="participants-management">
-                    <h3><span data-i18n="participants">المشاركون</span> (<span id="participantCount">0</span>)</h3>
+                <!-- Participants Management Card -->
+                <div class="management-card">
+                    <div class="card-header">
+                        <h3><span data-i18n="participants">المشاركون</span> (<span id="participantCount">0</span>)</h3>
+                        <div class="card-decoration">✦</div>
+                    </div>
+
                     <!-- Add Participant Manually -->
                     <div class="add-participant-manual">
                         <input type="text" id="manualParticipantName" data-i18n-placeholder="addManually" placeholder="أضف مشارك يدوياً" class="vintage-input">
@@ -185,15 +257,18 @@
                     <ul id="organizerParticipantsList" class="participants-list"></ul>
                 </div>
 
-                <!-- Restrictions Interface -->
-                <div class="restrictions-section">
-                    <h3 data-i18n="restrictionsOptional">القيود (اختياري)</h3>
+                <!-- Restrictions Card -->
+                <div class="management-card restrictions-card">
+                    <div class="card-header">
+                        <h3 data-i18n="restrictionsOptional">القيود (اختياري)</h3>
+                        <div class="card-decoration">☪</div>
+                    </div>
                     <p class="help-text" data-i18n="restrictionsHelp">حدد من لا يمكن أن يسحب بعضهم بعضاً</p>
                     <div id="restrictionsContainer"></div>
                 </div>
 
-                <!-- Draw Controls -->
-                <div class="draw-controls">
+                <!-- Draw Controls Card -->
+                <div class="draw-controls-card">
                     <div class="draw-progress">
                         <span id="organizerProgressText">0 من 0 سحبوا</span>
                         <div class="progress-bar">
@@ -201,7 +276,8 @@
                         </div>
                     </div>
                     <div class="action-buttons">
-                        <button onclick="startDrawAsOrganizer()" class="vintage-button primary" id="startDrawBtn" data-i18n="startDraw">
+                        <button onclick="startDrawAsOrganizer()" class="vintage-button primary large" id="startDrawBtn" data-i18n="startDraw">
+                            <span class="btn-icon">☪</span>
                             بدء السحب
                         </button>
                         <button onclick="resetSession()" class="vintage-button secondary" data-i18n="reset">
@@ -212,7 +288,9 @@
 
                 <!-- View All Assignments (Hidden by default) -->
                 <div class="view-results-section" id="viewResultsSection" style="display: none;">
-                    <h3 data-i18n="viewResults">عرض النتائج</h3>
+                    <div class="section-divider">
+                        <span class="divider-text" data-i18n="viewResults">عرض النتائج</span>
+                    </div>
                     <div class="results-buttons">
                         <button onclick="showAllAssignments()" class="vintage-button" id="showResultsBtn" data-i18n="showAllResults">
                             عرض جميع النتائج
@@ -235,7 +313,9 @@
 
                 <!-- Danger Zone -->
                 <div class="danger-zone">
-                    <h3 data-i18n="dangerZone">منطقة الخطر</h3>
+                    <div class="section-divider danger">
+                        <span class="divider-text" data-i18n="dangerZone">منطقة الخطر</span>
+                    </div>
                     <button onclick="deleteSession()" class="vintage-button danger" data-i18n="deleteSession">
                         حذف الجلسة
                     </button>
@@ -246,12 +326,20 @@
             <section class="participant-section" id="participantSection" style="display: none;">
                 <!-- Welcome Header -->
                 <div class="participant-welcome">
+                    <div class="welcome-decoration">
+                        <span class="deco-star left">✦</span>
+                        <span class="deco-crescent">☪</span>
+                        <span class="deco-star right">✦</span>
+                    </div>
                     <span class="welcome-label">مرحباً</span>
                     <span class="participant-name-large" id="participantNameLabel"></span>
                 </div>
 
                 <!-- Countdown Display for Participant -->
                 <div class="countdown-display participant-countdown" id="participantCountdown" style="display: none;">
+                    <div class="countdown-decoration">
+                        <span class="countdown-star">✦</span>
+                    </div>
                     <div class="countdown-content">
                         <span class="countdown-number" id="participantCountdownDays">0</span>
                         <span class="countdown-label" id="participantCountdownLabel">أيام متبقية</span>
@@ -265,6 +353,7 @@
                         <div class="status-icon waiting-icon">
                             <div class="pulse-ring"></div>
                             <div class="pulse-ring delay"></div>
+                            <span class="icon-inner">☪</span>
                         </div>
                         <h3>جاري الانتظار...</h3>
                         <p id="waitingMessage">المنظم يقوم بإعداد السحب</p>
@@ -275,6 +364,7 @@
                         <div class="status-icon waiting-icon">
                             <div class="pulse-ring"></div>
                             <div class="pulse-ring delay"></div>
+                            <span class="icon-inner">✦</span>
                         </div>
                         <h3>يرجى الانتظار</h3>
                         <p>سيتم إعلامك عندما يحين دورك</p>
@@ -283,19 +373,30 @@
                     <!-- Ready to Draw -->
                     <div class="ready-state" id="readyState" style="display: none;">
                         <div class="status-icon ready-icon">
-                            <span class="ready-checkmark"></span>
+                            <span class="ready-crescent">☪</span>
                         </div>
                         <h3>جاهز للسحب!</h3>
                         <p class="ready-subtitle">اضغط الزر لمعرفة من ستهدي</p>
                         <button onclick="drawAsParticipant()" class="draw-button">
-                            اسحب الآن
+                            <span class="draw-btn-text">اسحب الآن</span>
+                            <span class="draw-btn-icon">☪</span>
                         </button>
                     </div>
 
                     <!-- Result Display -->
                     <div class="result-state" id="resultState" style="display: none;">
                         <div class="result-card">
+                            <div class="result-decoration top">
+                                <span>✦</span>
+                                <span>☪</span>
+                                <span>✦</span>
+                            </div>
                             <div class="result-name" id="participantResultDisplay"></div>
+                            <div class="result-decoration bottom">
+                                <span>✦</span>
+                                <span>☪</span>
+                                <span>✦</span>
+                            </div>
                         </div>
                         <button onclick="copyResult()" class="vintage-button copy-result-btn">
                             نسخ النتيجة
@@ -305,13 +406,22 @@
 
                 <!-- Participants Browser -->
                 <div class="participants-browser" id="participantsBrowser">
-                    <h4>المشاركون الآخرون</h4>
+                    <div class="browser-header">
+                        <span class="browser-icon">✦</span>
+                        <h4>المشاركون الآخرون</h4>
+                    </div>
                     <ul id="waitingParticipantsList" class="waiting-participants-list"></ul>
                 </div>
             </section>
         </div>
 
-        <footer class="footer"></footer>
+        <footer class="footer">
+            <div class="footer-decoration">
+                <span>✦</span>
+                <span>☪</span>
+                <span>✦</span>
+            </div>
+        </footer>
     </div>
 
     <!-- Firebase SDK -->
