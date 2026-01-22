@@ -1,0 +1,11 @@
+{
+  "name": "family-secret-santa",
+  "version": "1.0.0",
+  "description": "Family gift exchange application",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1"
+  }
+}

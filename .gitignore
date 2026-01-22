@@ -6,10 +6,12 @@ firebase-debug.log
 # Node modules
 node_modules/
 
+# Source files (keep obfuscated output only)
+src/
+
 # Test files
 tests/
 jest.config.js
-package.json
 package-lock.json
 
 # OS files
