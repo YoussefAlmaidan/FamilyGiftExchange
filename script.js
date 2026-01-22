@@ -18,7 +18,7 @@ let translations = null;
 // Load translations from external JSON file
 async function loadTranslations() {
     try {
-        const response = await fetch('texts.json');
+        const response = await fetch('texts.json', { cache: 'no-cache' });
         translations = await response.json();
         return true;
     } catch (error) {
