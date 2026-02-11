@@ -1690,6 +1690,46 @@ h3 {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   RULES CARD
+   ═══════════════════════════════════════════════════════════════════ */
+
+.rules-card {
+    padding: 1.5rem;
+    background: rgba(232, 168, 56, 0.04);
+    border: 1px solid rgba(232, 168, 56, 0.12);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+}
+
+.rules-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(232, 168, 56, 0.15);
+}
+
+.rules-icon {
+    color: var(--lantern);
+    font-size: 0.9rem;
+}
+
+.rules-header h4 {
+    margin: 0;
+    color: var(--text-gold);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.rules-content {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    PARTICIPANTS BROWSER
    ═══════════════════════════════════════════════════════════════════ */
 
