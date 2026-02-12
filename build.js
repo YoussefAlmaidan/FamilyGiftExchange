@@ -74,8 +74,18 @@ const obfuscatedFirebaseConfig = JavaScriptObfuscator.obfuscate(firebaseConfigCo
 fs.writeFileSync(path.join(__dirname, 'firebase-config.js'), obfuscatedFirebaseConfig.getObfuscatedCode());
 console.log('   firebase-config.js written successfully.');
 
-// 7. Delete texts.json from root if it exists
-console.log('7. Cleaning up...');
+// 7. Update cache-busting version in index.html
+console.log('7. Updating script references in index.html...');
+const htmlPath = path.join(__dirname, 'index.html');
+let htmlContent = fs.readFileSync(htmlPath, 'utf8');
+const version = Date.now();
+htmlContent = htmlContent.replace(/src="firebase-config\.js(\?v=\d+)?"/g, `src="firebase-config.js?v=${version}"`);
+htmlContent = htmlContent.replace(/src="script\.js(\?v=\d+)?"/g, `src="script.js?v=${version}"`);
+fs.writeFileSync(htmlPath, htmlContent);
+console.log(`   Updated script tags with version ${version}.`);
+
+// 8. Delete texts.json from root if it exists
+console.log('8. Cleaning up...');
 const rootTextsPath = path.join(__dirname, 'texts.json');
 if (fs.existsSync(rootTextsPath)) {
     fs.unlinkSync(rootTextsPath);
@@ -86,3 +96,4 @@ console.log('\nBuild completed successfully!');
 console.log('Output files:');
 console.log('  - script.js (obfuscated, with embedded translations)');
 console.log('  - firebase-config.js (obfuscated)');
+console.log('  - index.html (cache-busted script references)');
